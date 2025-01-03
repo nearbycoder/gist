@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [
       viteTsConfigPaths({
         projects: ['./tsconfig.json'],
-      }),
+      }) as any,
     ],
   },
 });

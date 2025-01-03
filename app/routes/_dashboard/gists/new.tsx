@@ -1,8 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
-import { createServerFn } from '@tanstack/start';
-import { zodValidator } from '@tanstack/zod-adapter';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,54 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
 import { Switch } from '@/components/ui/switch';
+import { createGist } from '@/serverFunctions/gists';
 
 export const Route = createFileRoute('/_dashboard/gists/new')({
   component: RouteComponent,
 });
-export const createGist = createServerFn({ method: 'POST' })
-  .validator(
-    zodValidator(
-      z.object({
-        title: z.string(),
-        body: z.string(),
-        language: z.string(),
-        isPublic: z.boolean(),
-      })
-    )
-  )
-  .handler(async ({ data }) => {
-    const session = await useAppSession();
-    const user = await prisma.user.findUnique({
-      where: { email: session.data.userEmail },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const gist = await prisma.gist.create({
-      data: {
-        title: data.title,
-        language: data.language,
-        isPublic: data.isPublic,
-        userId: user.id,
-      },
-    });
-
-    await prisma.version.create({
-      data: {
-        version: 1,
-        body: data.body,
-        gistId: gist.id,
-      },
-    });
-
-    return gist;
-  });
-
 function RouteComponent() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');

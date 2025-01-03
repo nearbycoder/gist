@@ -1,10 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/start';
-import { z } from 'zod';
-import { zodValidator } from '@tanstack/zod-adapter';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { prisma } from '@/libs/db';
 import { Editor } from '@/components/Editor';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,51 +10,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-export const getGist = createServerFn()
-  .validator(
-    zodValidator(
-      z.object({
-        id: z.string(),
-      })
-    )
-  )
-  .handler(async ({ data }) => {
-    const gist = await prisma.gist.findUnique({
-      where: { id: data.id, isPublic: true },
-      include: {
-        versions: {
-          orderBy: {
-            version: 'desc',
-          },
-        },
-      },
-    });
-
-    return gist;
-  });
+import { getPublicGist } from '@/serverFunctions/gists';
 
 export const Route = createFileRoute('/gists/$id/share')({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const gist = await getGist({
+    const gist = await getPublicGist({
       data: {
         id: params.id,
       },
     });
 
     if (!gist) {
-      throw redirect({
-        to: '/',
-        replace: true,
-      });
+      throw new Error('Gist not found');
     }
 
     return gist;
   },
   errorComponent: ({ error }) => {
-    console.log(error);
-    return <div>Error: {error.message}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+        <h1 className="text-4xl font-bold text-gray-100 mb-4">Oops!</h1>
+        <p className="text-xl text-gray-200 mb-8">
+          {error.message === 'Gist not found'
+            ? "This gist doesn't exist or isn't public"
+            : error.message}
+        </p>
+        <Link
+          to="/auth/login"
+          replace
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          Go back home
+        </Link>
+      </div>
+    );
   },
 });
 
@@ -114,7 +100,7 @@ function RouteComponent() {
       <div className="border rounded-lg h-[calc(100vh-250px)]">
         <Suspense fallback={<div></div>}>
           <Editor
-            value={version?.body}
+            value={version.body}
             onChange={() => {}}
             language={gist.language || 'typescript'}
           />

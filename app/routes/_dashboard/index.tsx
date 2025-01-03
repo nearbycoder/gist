@@ -1,67 +1,14 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/start';
-import { z } from 'zod';
 import { Share, Trash } from 'lucide-react';
-import { prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
 import { Button } from '@/components/ui/button';
-
-export const getGists = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  const session = await useAppSession();
-  const user = await prisma.user.findUnique({
-    where: { email: session.data.userEmail },
-  });
-
-  if (!user) {
-    throw new Error('User not found');
-  }
-
-  return await prisma.gist.findMany({
-    where: {
-      userId: user.id,
-    },
-    include: {
-      versions: true,
-    },
-  });
-});
-
-export const deleteGist = createServerFn({
-  method: 'POST',
-})
-  .validator(
-    z.object({
-      gistId: z.string(),
-    })
-  )
-  .handler(async ({ data }) => {
-    const session = await useAppSession();
-    const user = await prisma.user.findUnique({
-      where: { email: session.data.userEmail },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    await prisma.version.deleteMany({
-      where: {
-        gistId: data.gistId,
-      },
-    });
-
-    await prisma.gist.delete({
-      where: { id: data.gistId, userId: user.id },
-    });
-
-    return;
-  });
+import { deleteGist, getGists } from '@/serverFunctions/gists';
 
 export const Route = createFileRoute('/_dashboard/')({
   component: Home,
   loader: async () => getGists(),
+  errorComponent: ({ error }) => {
+    return <div>Error: {error.message}</div>;
+  },
 });
 
 function Home() {

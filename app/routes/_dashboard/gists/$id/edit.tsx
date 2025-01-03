@@ -1,9 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
-import { createServerFn } from '@tanstack/start';
-import { zodValidator } from '@tanstack/zod-adapter';
-import { z } from 'zod';
-import { getGist } from '.';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,9 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
 import { Switch } from '@/components/ui/switch';
+import { getGist, updateGist } from '@/serverFunctions/gists';
 
 export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
   component: RouteComponent,
@@ -35,54 +30,6 @@ export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
     return gist;
   },
 });
-export const updateGist = createServerFn({ method: 'POST' })
-  .validator(
-    zodValidator(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        body: z.string(),
-        language: z.string(),
-        isPublic: z.boolean(),
-      })
-    )
-  )
-  .handler(async ({ data }) => {
-    const session = await useAppSession();
-    const user = await prisma.user.findUnique({
-      where: { email: session.data.userEmail },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const versions = await prisma.version.findMany({
-      where: { gistId: data.id },
-      orderBy: {
-        version: 'desc',
-      },
-    });
-
-    const gist = await prisma.gist.update({
-      where: { id: data.id, userId: user.id },
-      data: {
-        title: data.title,
-        language: data.language,
-        isPublic: data.isPublic,
-      },
-    });
-
-    await prisma.version.create({
-      data: {
-        version: versions[0].version + 1,
-        body: data.body,
-        gistId: gist.id,
-      },
-    });
-
-    return gist;
-  });
 
 function RouteComponent() {
   const gist = Route.useLoaderData();
