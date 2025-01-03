@@ -75,4 +75,3 @@ The application should now be running at [http://localhost:3000](http://localhos
 - SQLite (Database)
 - Tailwind CSS (Styling)
 - shadcn/ui (UI Components)
-- test
