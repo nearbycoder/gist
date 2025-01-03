@@ -24,7 +24,7 @@ function Home() {
       </div>
       <div className="p-6 space-y-6">
         {gists.length === 0 ? (
-          <div className="text-center text-gray-500 p-12 border-2 border-dashed rounded-lg">
+          <div className="text-center text-gray-300 p-12 border-2 border-dashed rounded-lg">
             <p className="text-lg font-medium">No gists found</p>
             <p className="text-sm">Create your first gist to get started</p>
           </div>
