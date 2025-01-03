@@ -1,13 +1,20 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/start';
 import { useAppSession } from '@/libs/session';
+
+const getUser = createServerFn({ method: 'GET' }).handler(async () => {
+  const session = await useAppSession();
+
+  return session.data.userEmail;
+});
 
 export const Route = createFileRoute('/auth')({
   component: RouteComponent,
   beforeLoad: async () => {
-    const session = await useAppSession();
+    const user = await getUser();
 
-    if (session.data.userEmail) {
-      return redirect({ to: '/' });
+    if (user) {
+      redirect({ to: '/', throw: true });
     }
   },
 });

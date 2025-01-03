@@ -1,5 +1,3 @@
-'use server';
-
 import { createServerFn } from '@tanstack/start';
 import { z } from 'zod';
 import { zodValidator } from '@tanstack/zod-adapter';
