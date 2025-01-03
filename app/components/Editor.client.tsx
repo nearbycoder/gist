@@ -30,6 +30,8 @@ export function Editor({
             enabled: false,
           },
           fontSize: 18,
+          formatOnPaste: true,
+          formatOnType: true,
         }}
       />
     </Suspense>
