@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Gist {
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  language  String?
+  isPublic  Boolean   @default(false)
+  // Relations
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  versions  Version[]
+}
+
+model Version {
+  id        String   @id @default(cuid())
+  version   Int
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  gistId String
+  gist   Gist   @relation(fields: [gistId], references: [id])
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  password String
+  name     String?
+  gists    Gist[]
+}

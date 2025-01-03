@@ -1,0 +1,34 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "eslint.validate": ["javascript", "typescript"],
+  "eslint.options": {
+    "flags": ["unstable_ts_config"]
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.watcherExclude": {
+    "**/route-tree.gen.ts": true,
+    "pnpm-lock.yaml": true
+  },
+  "search.exclude": {
+    "**/route-tree.gen.ts": true,
+    "pnpm-lock.yaml": true
+  },
+  "files.readonlyInclude": {
+    "**/route-tree.gen.ts": true,
+    "pnpm-lock.yaml": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": true
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": true
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ]
+}
