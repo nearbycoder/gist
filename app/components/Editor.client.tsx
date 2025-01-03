@@ -1,7 +1,10 @@
 'use client';
 
-import MonacoEditor from '@monaco-editor/react';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
+
+const MonacoEditor = lazy(() =>
+  import('@monaco-editor/react').then((mod) => ({ default: mod.Editor }))
+);
 
 export function Editor({
   language,

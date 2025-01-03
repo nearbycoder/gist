@@ -7,7 +7,7 @@ import {
 import { Suspense, useEffect, useState } from 'react';
 
 import { Share } from 'lucide-react';
-import { Editor } from '@/components/Editor';
+import { Editor } from '@/components/Editor.client';
 import { Label } from '@/components/ui/label';
 import {
   Select,
