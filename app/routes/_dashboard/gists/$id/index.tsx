@@ -38,7 +38,6 @@ export const Route = createFileRoute('/_dashboard/gists/$id/')({
     return gist;
   },
   errorComponent: ({ error }) => {
-    console.log(error);
     return <div>Error: {error.message}</div>;
   },
 });

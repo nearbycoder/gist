@@ -1,9 +1,17 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Editor } from '@/components/Editor.client';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -12,7 +20,26 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Editor } from '@/components/Editor.client';
 import { getGist, updateGist } from '@/serverFunctions/gists';
+
+const EditGistSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  body: z.string().min(1, 'Content is required'),
+  language: z.enum([
+    'typescript',
+    'javascript',
+    'python',
+    'rust',
+    'go',
+    'java',
+    'csharp',
+    'php',
+    'ruby',
+    'swift',
+  ]),
+  isPublic: z.boolean(),
+});
 
 export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
   component: RouteComponent,
@@ -31,23 +58,43 @@ export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
   },
 });
 
+export const validLanguages = [
+  'typescript',
+  'javascript',
+  'python',
+  'rust',
+  'go',
+  'java',
+  'csharp',
+  'php',
+  'ruby',
+  'swift',
+] as const;
+
 function RouteComponent() {
   const gist = Route.useLoaderData();
-  const [title, setTitle] = useState(gist.title || '');
-  const [body, setBody] = useState(gist.versions[0].body || '');
-  const [isPublic, setIsPublic] = useState(gist.isPublic || false);
   const router = useRouter();
-  const [language, setLanguage] = useState(gist.language || 'typescript');
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+  const defaultLanguage = 'typescript';
+  const initialLanguage = validLanguages.includes(gist.language as any)
+    ? gist.language
+    : defaultLanguage;
+
+  const form = useForm<z.infer<typeof EditGistSchema>>({
+    resolver: zodResolver(EditGistSchema),
+    defaultValues: {
+      title: gist.title || '',
+      body: gist.versions[0].body || '',
+      language: initialLanguage as z.infer<typeof EditGistSchema>['language'],
+      isPublic: gist.isPublic || false,
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof EditGistSchema>) => {
     await updateGist({
       data: {
         id: gist.id,
-        title,
-        body,
-        language,
-        isPublic,
+        ...values,
       },
     });
 
@@ -59,67 +106,94 @@ function RouteComponent() {
   };
 
   return (
-    <>
+    <Form {...form}>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 p-6 h-full flex flex-col"
       >
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter gist title"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="body">Language</Label>
-          <Select onValueChange={(v) => setLanguage(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="TypeScript" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="typescript">TypeScript</SelectItem>
-              <SelectItem value="javascript">JavaScript</SelectItem>
-              <SelectItem value="python">Python</SelectItem>
-              <SelectItem value="rust">Rust</SelectItem>
-              <SelectItem value="go">Go</SelectItem>
-              <SelectItem value="java">Java</SelectItem>
-              <SelectItem value="csharp">C#</SelectItem>
-              <SelectItem value="php">PHP</SelectItem>
-              <SelectItem value="ruby">Ruby</SelectItem>
-              <SelectItem value="swift">Swift</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2 flex gap-2 items-center">
-          <Label htmlFor="body" className="mt-2">
-            Public
-          </Label>
-          <Switch
-            defaultChecked={isPublic}
-            onCheckedChange={(v) => setIsPublic(v)}
-          />
-        </div>
-        <div className="space-y-2 h-[calc(100%-300px)]">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="body">Content</Label>
-            <span className="text-sm text-gray-300">
-              Version {gist.versions[0].version + 1}
-            </span>
-          </div>
-          <Editor
-            language={language}
-            value={body}
-            onChange={(v) => setBody(v || '')}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter gist title" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="language"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Language</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="TypeScript" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {validLanguages.map((language) => (
+                    <SelectItem key={language} value={language}>
+                      {language.charAt(0).toUpperCase() + language.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isPublic"
+          render={({ field }) => (
+            <FormItem className="flex gap-2 items-center">
+              <FormLabel className="mt-2">Public</FormLabel>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="body"
+          render={({ field }) => (
+            <FormItem className="h-[calc(100%-300px)]">
+              <div className="flex items-center justify-between">
+                <FormLabel>Content</FormLabel>
+                <span className="text-sm text-gray-300">
+                  Version {gist.versions[0].version + 1}
+                </span>
+              </div>
+              <FormControl>
+                <Editor
+                  language={form.watch('language')}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex relative justify-end pt-8">
           <Button type="submit">Update Gist</Button>
         </div>
       </form>
-    </>
+    </Form>
   );
 }
