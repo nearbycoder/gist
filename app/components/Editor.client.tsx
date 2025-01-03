@@ -25,7 +25,6 @@ export function Editor({
         }}
         height="100%"
         language={language}
-        defaultValue="// some comment"
         options={{
           minimap: {
             enabled: false,
