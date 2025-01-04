@@ -52,7 +52,7 @@ function RouteComponent() {
   }, [gist]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 flex h-full flex-col">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{gist.title}</h1>
@@ -134,7 +134,7 @@ function RouteComponent() {
           </SelectContent>
         </Select>
       </div>
-      <div className="border rounded-lg h-[500px]">
+      <div className="border rounded-lg h-[calc(100%-300px)]">
         <Suspense fallback={<div></div>}>
           <Editor
             value={version.body}

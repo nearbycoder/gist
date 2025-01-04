@@ -179,11 +179,13 @@ function RouteComponent() {
                 </span>
               </div>
               <FormControl>
-                <Editor
-                  language={form.watch('language')}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
+                <div className="border rounded-lg h-full">
+                  <Editor
+                    language={form.watch('language')}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
