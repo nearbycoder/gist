@@ -20,7 +20,10 @@ export const APIRoute = createAPIFileRoute('/api/gists/$id')({
     });
 
     if (!gist) {
-      return json({ error: 'Gist not found' }, { status: 404 });
+      return json(
+        { error: 'Gist not found or is not public' },
+        { status: 404 }
+      );
     }
 
     if (version) {
