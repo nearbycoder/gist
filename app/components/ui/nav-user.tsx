@@ -2,7 +2,6 @@
 
 import { ChevronsUpDown, LogOut } from 'lucide-react';
 
-import { createServerFn } from '@tanstack/start';
 import { useRouter } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -19,17 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useAppSession } from '@/libs/session';
-
-const logOut = createServerFn({ method: 'POST' }).handler(async () => {
-  const session = await useAppSession();
-
-  session.clear();
-
-  return {
-    success: true,
-  };
-});
+import { logOut } from '@/serverFunctions/auth';
 
 export function NavUser({
   user,
@@ -94,11 +83,10 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() =>
-                logOut().then(() => {
-                  router.navigate({ to: '/auth/login' });
-                })
-              }
+              onClick={async () => {
+                await logOut();
+                router.navigate({ to: '/auth/login' });
+              }}
             >
               <LogOut />
               Log out

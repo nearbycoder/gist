@@ -1,9 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createServerFn } from '@tanstack/start';
-import { zodValidator } from '@tanstack/zod-adapter';
+import type { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -14,67 +12,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { hashPassword, prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
 import { parseError } from '@/libs/utils';
+import { UserRegister, registerUser } from '@/serverFunctions/auth';
 
 export const Route = createFileRoute('/auth/register')({
   component: RouteComponent,
 });
-
-const UserRegister = z
-  .object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirm: z.string().min(8, 'Password must be at least 8 characters'),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
-    path: ['confirm'],
-  });
-
-const registerUser = createServerFn({ method: 'POST' })
-  .validator(zodValidator(UserRegister))
-  .handler(async ({ data }) => {
-    const currentUser = await prisma.user.findFirst({
-      where: { email: data.email },
-    });
-
-    if (data.password !== data.confirm) {
-      return {
-        data: {
-          error: 'Passwords do not match',
-        },
-      };
-    }
-
-    if (currentUser) {
-      return {
-        data: {
-          error: 'Email or password is incorrect',
-        },
-      };
-    }
-
-    const hashedPassword = await hashPassword(data.password);
-
-    const user = await prisma.user.create({
-      data: {
-        email: data.email,
-        password: hashedPassword,
-      },
-    });
-
-    // Create a session
-    const session = await useAppSession();
-
-    // Store the user's email in the session
-    await session.update({
-      userEmail: user.email,
-    });
-
-    return user;
-  });
 
 function RouteComponent() {
   const router = useRouter();

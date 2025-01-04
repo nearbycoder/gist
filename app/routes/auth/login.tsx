@@ -1,9 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createServerFn } from '@tanstack/start';
-import { zodValidator } from '@tanstack/zod-adapter';
+import type { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -14,42 +12,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { hashPassword, prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
 import { parseError } from '@/libs/utils';
+import { UserLogin, loginUser } from '@/serverFunctions/auth';
 
 export const Route = createFileRoute('/auth/login')({
   component: RouteComponent,
 });
-
-const UserLogin = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-const loginUser = createServerFn({ method: 'POST' })
-  .validator(zodValidator(UserLogin))
-  .handler(async ({ data }) => {
-    const user = await prisma.user.findFirst({ where: { email: data.email } });
-
-    if (!user || (await hashPassword(data.password)) !== user.password) {
-      return {
-        data: {
-          error: 'Email or password is incorrect',
-        },
-      };
-    }
-
-    // Create a session
-    const session = await useAppSession();
-
-    // Store the user's email in the session
-    await session.update({
-      userEmail: user.email,
-    });
-
-    return user;
-  });
 
 function RouteComponent() {
   const router = useRouter();
