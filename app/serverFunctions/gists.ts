@@ -5,10 +5,16 @@ import { prisma } from '@/libs/db';
 import { useAppSession } from '@/libs/session';
 
 // Middleware
-const authMiddleware = createMiddleware().server(async ({ next }) => {
+export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const session = await useAppSession();
-  const user = await prisma.user.findUnique({
+
+  const user = await prisma.user.findFirst({
     where: { email: session.data.userEmail },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+    },
   });
 
   if (!user) {

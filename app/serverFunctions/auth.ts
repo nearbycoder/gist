@@ -31,7 +31,7 @@ export const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
       },
     });
     // eslint-disable-next-line unused-imports/no-unused-vars
-  } catch (_error) {
+  } catch (error) {
     await session.clear();
     throw new Error('Not authenticated');
   }
