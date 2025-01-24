@@ -31,6 +31,10 @@ export function Editor({
             noSyntaxValidation: true,
           });
 
+          monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+            jsx: 4,
+          });
+
           monaco.editor.addKeybindingRule({
             keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
             command: 'editor.action.formatDocument',
