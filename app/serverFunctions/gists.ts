@@ -39,6 +39,7 @@ export const getGists = createServerFn({
         search: z.string().optional(),
         language: z.string().optional(),
         isPublic: z.boolean().optional(),
+        favoritesOnly: z.boolean().optional(),
       })
     )
   )
@@ -59,17 +60,40 @@ export const getGists = createServerFn({
       ...(typeof data.isPublic === 'boolean'
         ? { isPublic: data.isPublic }
         : {}),
+      ...(data.favoritesOnly
+        ? {
+            favoritedBy: {
+              some: {
+                id: user.id,
+              },
+            },
+          }
+        : {}),
     };
 
-    return await prisma.gist.findMany({
+    const gists = await prisma.gist.findMany({
       where,
       include: {
         versions: true,
+        favoritedBy: {
+          where: {
+            id: user.id,
+          },
+          select: {
+            id: true,
+          },
+        },
       },
       orderBy: {
         updatedAt: 'desc',
       },
     });
+
+    return gists.map((gist) => ({
+      ...gist,
+      isFavorite: gist.favoritedBy.length > 0,
+      favoritedBy: undefined,
+    }));
   });
 
 // GET /api/gists/:id
@@ -95,10 +119,24 @@ export const getGist = createServerFn({
             version: 'desc',
           },
         },
+        favoritedBy: {
+          where: {
+            id: user.id,
+          },
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
-    return gist;
+    if (!gist) return null;
+
+    return {
+      ...gist,
+      isFavorite: gist.favoritedBy.length > 0,
+      favoritedBy: undefined,
+    };
   });
 
 // GET /api/gists/:id/public
@@ -231,4 +269,49 @@ export const deleteGist = createServerFn({
     });
 
     return;
+  });
+
+// POST /api/gists/:id/favorite
+export const toggleFavorite = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
+  .validator(
+    zodValidator(
+      z.object({
+        gistId: z.string(),
+      })
+    )
+  )
+  .handler(async ({ data, context }) => {
+    const user = context.user;
+
+    const favorite = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        favorites: {
+          where: { id: data.gistId },
+        },
+      },
+    });
+
+    if (favorite?.favorites.length) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          favorites: {
+            disconnect: { id: data.gistId },
+          },
+        },
+      });
+      return false;
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          favorites: {
+            connect: { id: data.gistId },
+          },
+        },
+      });
+      return true;
+    }
   });

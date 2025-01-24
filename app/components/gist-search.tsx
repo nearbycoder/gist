@@ -23,58 +23,73 @@ export const validLanguages = [
   'swift',
 ] as const;
 
-interface GistSearchProps {
+export interface GistSearchProps {
   search: string;
   language: string | null;
   isPublic: boolean | null;
+  favoritesOnly: boolean | null;
   onSearchChange: (search: string) => void;
   onLanguageChange: (language: string | null) => void;
   onIsPublicChange: (isPublic: boolean | null) => void;
+  onFavoritesOnlyChange: (favoritesOnly: boolean | null) => void;
 }
 
 export function GistSearch({
   search,
   language,
   isPublic,
+  favoritesOnly,
   onSearchChange,
   onLanguageChange,
   onIsPublicChange,
+  onFavoritesOnlyChange,
 }: GistSearchProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-3 items-end flex-1 max-w-3xl">
+    <div className="flex items-center gap-4 flex-1">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search gists..."
+          className="pl-8"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10"
         />
       </div>
-      <div className="flex gap-3 items-center">
-        <Select
-          value={language || ''}
-          onValueChange={(val) => onLanguageChange(val || null)}
-        >
-          <SelectTrigger className="w-[130px]">
-            <SelectValue placeholder="All languages" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="-">All languages</SelectItem>
-            {validLanguages.map((lang) => (
-              <SelectItem key={lang} value={lang}>
-                {lang.charAt(0).toUpperCase() + lang.slice(1)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex items-center gap-2 min-w-[120px]">
-          <Label className="cursor-pointer">Public only</Label>
-          <Switch
-            checked={isPublic || false}
-            onCheckedChange={(checked) => onIsPublicChange(checked || null)}
-          />
-        </div>
+      <Select
+        value={language || '-'}
+        onValueChange={(value) =>
+          onLanguageChange(value === '-' ? null : value)
+        }
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select language" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="-">All languages</SelectItem>
+          <SelectItem value="javascript">JavaScript</SelectItem>
+          <SelectItem value="typescript">TypeScript</SelectItem>
+          <SelectItem value="python">Python</SelectItem>
+          <SelectItem value="ruby">Ruby</SelectItem>
+          <SelectItem value="java">Java</SelectItem>
+          <SelectItem value="go">Go</SelectItem>
+          <SelectItem value="rust">Rust</SelectItem>
+        </SelectContent>
+      </Select>
+      <div className="flex items-center gap-2">
+        <Switch
+          id="public"
+          checked={isPublic || false}
+          onCheckedChange={(checked) => onIsPublicChange(checked || null)}
+        />
+        <Label htmlFor="public">Public only</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <Switch
+          id="favorites"
+          checked={favoritesOnly || false}
+          onCheckedChange={(checked) => onFavoritesOnlyChange(checked || null)}
+        />
+        <Label htmlFor="favorites">Favorites only</Label>
       </div>
     </div>
   );

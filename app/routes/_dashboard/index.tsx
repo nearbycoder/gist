@@ -1,16 +1,18 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
-import { Search, Share, Trash } from 'lucide-react';
+import { Heart, Search, Share, Trash } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { deleteGist, getGists } from '@/serverFunctions/gists';
+import { deleteGist, getGists, toggleFavorite } from '@/serverFunctions/gists';
 import { GistSearch } from '@/components/gist-search';
 import { useDebounce } from '@/hooks/use-debounce';
+import { cn } from '@/libs/utils';
 
 const searchSchema = z.object({
   search: z.string().optional(),
   language: z.string().optional(),
   isPublic: z.enum(['true', 'false']).optional(),
+  favoritesOnly: z.enum(['true', 'false']).optional(),
 });
 
 type SearchParams = z.infer<typeof searchSchema>;
@@ -24,6 +26,7 @@ export const Route = createFileRoute('/_dashboard/')({
       search: search.search,
       language: search.language,
       isPublic: search.isPublic === 'true' ? true : undefined,
+      favoritesOnly: search.favoritesOnly === 'true' ? true : undefined,
     };
     return getGists({ data: searchParams });
   },
@@ -50,6 +53,8 @@ function Home() {
       if (newSearch.language && newSearch.language !== '-')
         searchParams.language = newSearch.language;
       if (newSearch.isPublic) searchParams.isPublic = newSearch.isPublic;
+      if (newSearch.favoritesOnly)
+        searchParams.favoritesOnly = newSearch.favoritesOnly;
 
       router.navigate({
         to: '/',
@@ -63,6 +68,11 @@ function Home() {
     updateSearch({ search: debouncedSearch });
   }, [debouncedSearch, updateSearch]);
 
+  const handleFavoriteToggle = async (gistId: string) => {
+    await toggleFavorite({ data: { gistId } });
+    router.invalidate();
+  };
+
   return (
     <div className="space-y-6">
       <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
@@ -71,12 +81,18 @@ function Home() {
             search={searchTerm}
             language={search.language || null}
             isPublic={search.isPublic === 'true' ? true : null}
+            favoritesOnly={search.favoritesOnly === 'true' ? true : null}
             onSearchChange={setSearchTerm}
             onLanguageChange={(language) =>
               updateSearch({ language: language || undefined })
             }
             onIsPublicChange={(isPublic) =>
               updateSearch({ isPublic: isPublic ? 'true' : undefined })
+            }
+            onFavoritesOnlyChange={(favoritesOnly) =>
+              updateSearch({
+                favoritesOnly: favoritesOnly ? 'true' : undefined,
+              })
             }
           />
           <Button asChild>
@@ -92,7 +108,10 @@ function Home() {
             </div>
             <h3 className="text-lg font-medium">No gists found</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              {searchTerm || search.language || search.isPublic
+              {searchTerm ||
+              search.language ||
+              search.isPublic ||
+              search.favoritesOnly
                 ? 'Try adjusting your search filters'
                 : 'Create your first gist to get started'}
             </p>
@@ -113,7 +132,30 @@ function Home() {
                     <h3 className="font-medium truncate pr-8">
                       {gist.title || 'Untitled Gist'}
                     </h3>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleFavoriteToggle(gist.id);
+                        }}
+                        aria-label={
+                          gist.isFavorite
+                            ? 'Remove from favorites'
+                            : 'Add to favorites'
+                        }
+                        className={cn(
+                          'text-muted-foreground hover:text-foreground transition-colors',
+                          gist.isFavorite
+                            ? 'text-red-500 hover:text-red-600'
+                            : 'opacity-0 group-hover:opacity-100'
+                        )}
+                      >
+                        <Heart
+                          className="w-4 h-4"
+                          fill={gist.isFavorite ? 'currentColor' : 'none'}
+                        />
+                      </button>
                       {gist.isPublic && (
                         <button
                           aria-label="Share gist"

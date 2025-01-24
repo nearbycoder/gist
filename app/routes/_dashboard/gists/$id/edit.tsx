@@ -171,7 +171,7 @@ function RouteComponent() {
           control={form.control}
           name="body"
           render={({ field }) => (
-            <FormItem className="h-[calc(100%-300px)]">
+            <FormItem className="h-[calc(100%-280px)]">
               <div className="flex items-center justify-between">
                 <FormLabel>Content</FormLabel>
                 <span className="text-sm text-gray-300">

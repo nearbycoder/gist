@@ -8,16 +8,17 @@ datasource db {
 }
 
 model Gist {
-  id        String    @id @default(cuid())
-  title     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  language  String?
-  isPublic  Boolean   @default(false)
+  id          String    @id @default(cuid())
+  title       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  language    String?
+  isPublic    Boolean   @default(false)
   // Relations
-  userId    String
-  user      User      @relation(fields: [userId], references: [id])
-  versions  Version[]
+  userId      String
+  user        User      @relation("UserGists", fields: [userId], references: [id])
+  versions    Version[]
+  favoritedBy User[]    @relation("UserFavorites")
 }
 
 model Version {
@@ -33,9 +34,10 @@ model Version {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  email    String  @unique
-  password String
-  name     String?
-  gists    Gist[]
+  id        String  @id @default(cuid())
+  email     String  @unique
+  password  String
+  name      String?
+  gists     Gist[]  @relation("UserGists")
+  favorites Gist[]  @relation("UserFavorites")
 }

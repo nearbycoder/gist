@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { Share } from 'lucide-react';
+import { Heart, Share } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { Label } from '@/components/ui/label';
 import {
@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { deleteGist, getGist } from '@/serverFunctions/gists';
+import { deleteGist, getGist, toggleFavorite } from '@/serverFunctions/gists';
+import { cn } from '@/libs/utils';
 
 export const Route = createFileRoute('/_dashboard/gists/$id/')({
   component: RouteComponent,
@@ -51,6 +52,11 @@ function RouteComponent() {
     setVersion(gist.versions[0]);
   }, [gist]);
 
+  const handleFavoriteToggle = async () => {
+    await toggleFavorite({ data: { gistId: gist.id } });
+    router.invalidate();
+  };
+
   return (
     <div className="p-6 space-y-6 flex h-full flex-col">
       <div className="flex items-center justify-between">
@@ -68,6 +74,20 @@ function RouteComponent() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleFavoriteToggle}
+            className={cn(
+              'transition-colors',
+              gist.isFavorite && 'text-red-500 hover:text-red-600'
+            )}
+          >
+            <Heart
+              className="w-4 h-4"
+              fill={gist.isFavorite ? 'currentColor' : 'none'}
+            />
+          </Button>
           {gist.isPublic && (
             <Link to={`/gists/$id/share`} params={{ id: gist.id }}>
               <Button>
@@ -134,7 +154,7 @@ function RouteComponent() {
           </SelectContent>
         </Select>
       </div>
-      <div className="border rounded-lg h-[calc(100%-300px)]">
+      <div className="border rounded-lg h-[calc(100%-160px)]">
         <Suspense fallback={<div></div>}>
           <Editor
             value={version.body}
