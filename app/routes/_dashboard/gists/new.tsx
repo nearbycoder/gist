@@ -120,7 +120,7 @@ function RouteComponent() {
           name="isPublic"
           render={({ field }) => (
             <FormItem className="flex gap-2 items-center">
-              <FormLabel className="mt-2">Public</FormLabel>
+              <FormLabel>Public</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value}

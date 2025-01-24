@@ -33,15 +33,41 @@ export const getGists = createServerFn({
   method: 'GET',
 })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
+  .validator(
+    zodValidator(
+      z.object({
+        search: z.string().optional(),
+        language: z.string().optional(),
+        isPublic: z.boolean().optional(),
+      })
+    )
+  )
+  .handler(async ({ data, context }) => {
     const user = context.user;
 
+    const where = {
+      userId: user.id,
+      ...(data.search
+        ? {
+            OR: [
+              { title: { contains: data.search } },
+              { versions: { some: { body: { contains: data.search } } } },
+            ],
+          }
+        : {}),
+      ...(data.language ? { language: data.language } : {}),
+      ...(typeof data.isPublic === 'boolean'
+        ? { isPublic: data.isPublic }
+        : {}),
+    };
+
     return await prisma.gist.findMany({
-      where: {
-        userId: user.id,
-      },
+      where,
       include: {
         versions: true,
+      },
+      orderBy: {
+        updatedAt: 'desc',
       },
     });
   });
