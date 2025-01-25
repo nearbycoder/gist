@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { fetchUser } from '@/serverFunctions/auth';
+import { CommandPalette } from '@/components/command-palette';
 
 export const Route = createFileRoute('/_dashboard')({
   component: RouteComponent,
@@ -39,6 +40,7 @@ function RouteComponent() {
           <Outlet />
         </div>
       </main>
+      <CommandPalette />
     </SidebarProvider>
   );
 }
