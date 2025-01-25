@@ -33,25 +33,8 @@ export function CommandPalette() {
     return () => document.removeEventListener('keydown', down);
   }, []);
 
-  // Fetch initial gists when opened
   React.useEffect(() => {
-    if (open && !search) {
-      const fetchInitialGists = async () => {
-        const results = await getGists({
-          data: {},
-        });
-        setGists(results.slice(0, 20));
-      };
-
-      fetchInitialGists();
-    }
-  }, [open, search]);
-
-  // Fetch search results
-  React.useEffect(() => {
-    if (!debouncedSearch) {
-      return;
-    }
+    if (!open) return;
 
     const fetchGists = async () => {
       const results = await getGists({
@@ -60,13 +43,14 @@ export function CommandPalette() {
           language: undefined,
           isPublic: undefined,
           favoritesOnly: undefined,
+          take: debouncedSearch ? undefined : 20,
         },
       });
       setGists(results);
     };
 
     fetchGists();
-  }, [debouncedSearch]);
+  }, [open, debouncedSearch]);
 
   const handleSelect = (gistId: string) => {
     setOpen(false);

@@ -40,6 +40,7 @@ export const getGists = createServerFn({
         language: z.string().optional(),
         isPublic: z.boolean().optional(),
         favoritesOnly: z.boolean().optional(),
+        take: z.number().optional(),
       })
     )
   )
@@ -73,6 +74,7 @@ export const getGists = createServerFn({
 
     const gists = await prisma.gist.findMany({
       where,
+      take: data.take,
       include: {
         versions: true,
         favoritedBy: {
