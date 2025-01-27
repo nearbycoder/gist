@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { Heart, Share } from 'lucide-react';
+import { Heart, Pencil, Share, Trash } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { Label } from '@/components/ui/label';
 import {
@@ -58,22 +58,24 @@ function RouteComponent() {
   };
 
   return (
-    <div className="p-6 space-y-6 flex h-full flex-col">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 space-y-6 flex h-full flex-col">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{gist.title}</h1>
-          <div className="flex items-center space-x-2 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">
+            {gist.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 mt-1">
             <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
               {gist.language}
             </span>
-            <span className="text-gray-300">•</span>
+            <span className="text-gray-300 hidden sm:inline">•</span>
             <span className="text-gray-300">
               {gist.versions.length} version
               {gist.versions.length !== 1 ? 's' : ''}
             </span>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -90,8 +92,9 @@ function RouteComponent() {
           </Button>
           {gist.isPublic && (
             <Link to={`/gists/$id/share`} params={{ id: gist.id }}>
-              <Button>
-                <Share />
+              <Button size="sm" className="gap-2">
+                <Share className="w-4 h-4" />
+                <span className="hidden sm:inline">Share</span>
               </Button>
             </Link>
           )}
@@ -115,17 +118,21 @@ function RouteComponent() {
               }
             }}
             variant="destructive"
+            size="sm"
+            className="gap-2"
           >
-            Delete
+            <Trash className="w-4 h-4" />
+            <span className="hidden sm:inline">Delete</span>
           </Button>
-          <Button asChild>
+          <Button asChild size="sm" className="gap-2">
             <Link
               to={`/gists/$id/edit`}
               params={{
                 id: gist.id,
               }}
             >
-              Edit
+              <Pencil className="w-4 h-4" />
+              <span className="hidden sm:inline">Edit</span>
             </Link>
           </Button>
         </div>
@@ -142,7 +149,7 @@ function RouteComponent() {
             }
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Version" />
           </SelectTrigger>
           <SelectContent>
@@ -154,7 +161,7 @@ function RouteComponent() {
           </SelectContent>
         </Select>
       </div>
-      <div className="border rounded-lg h-[calc(100%-160px)]">
+      <div className="border rounded-lg h-[calc(100%-200px)] sm:h-[calc(100%-160px)]">
         <Suspense fallback={<div></div>}>
           <Editor
             value={version.body}

@@ -109,69 +109,74 @@ function RouteComponent() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 p-6 h-full flex flex-col"
+        className="space-y-4 p-4 sm:p-6 h-full flex flex-col"
       >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter gist title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="language"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Language</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="TypeScript" />
-                  </SelectTrigger>
+                  <Input placeholder="Enter gist title" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {validLanguages.map((language) => (
-                    <SelectItem key={language} value={language}>
-                      {language.charAt(0).toUpperCase() + language.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="isPublic"
-          render={({ field }) => (
-            <FormItem className="flex gap-2 items-center">
-              <FormLabel>Public</FormLabel>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="language"
+            render={({ field }) => (
+              <FormItem className="w-full sm:w-auto">
+                <FormLabel>Language</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="TypeScript" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {validLanguages.map((language) => (
+                      <SelectItem key={language} value={language}>
+                        {language.charAt(0).toUpperCase() + language.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="isPublic"
+            render={({ field }) => (
+              <FormItem className="flex gap-2 items-end">
+                <FormLabel className="whitespace-nowrap">Public</FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
           name="body"
           render={({ field }) => (
-            <FormItem className="h-[calc(100%-280px)]">
+            <FormItem className="h-[calc(100%-180px)]">
               <div className="flex items-center justify-between">
                 <FormLabel>Content</FormLabel>
                 <span className="text-sm text-gray-300">
@@ -192,8 +197,10 @@ function RouteComponent() {
           )}
         />
 
-        <div className="flex relative justify-end pt-8">
-          <Button type="submit">Update Gist</Button>
+        <div className="flex justify-end pt-4 sm:pt-8">
+          <Button type="submit" className="w-full sm:w-auto">
+            Update Gist
+          </Button>
         </div>
       </form>
     </Form>

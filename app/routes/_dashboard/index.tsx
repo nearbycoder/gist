@@ -76,7 +76,7 @@ function Home() {
   return (
     <div className="space-y-6">
       <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
-        <div className="flex items-center gap-4 p-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4">
           <GistSearch
             search={searchTerm}
             language={search.language || null}
@@ -95,7 +95,7 @@ function Home() {
               })
             }
           />
-          <Button asChild>
+          <Button asChild className="w-full sm:w-auto">
             <Link to="/gists/new">+ New Gist</Link>
           </Button>
         </div>
@@ -106,8 +106,8 @@ function Home() {
             <div className="rounded-full bg-muted p-3 mb-4">
               <Search className="w-6 h-6 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium">No gists found</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h3 className="text-lg font-medium text-center">No gists found</h3>
+            <p className="text-sm text-muted-foreground mt-1 text-center">
               {searchTerm ||
               search.language ||
               search.isPublic ||
@@ -132,7 +132,7 @@ function Home() {
                     <h3 className="font-medium truncate pr-8">
                       {gist.title || 'Untitled Gist'}
                     </h3>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -148,7 +148,7 @@ function Home() {
                           'text-muted-foreground hover:text-foreground transition-colors',
                           gist.isFavorite
                             ? 'text-red-500 hover:text-red-600'
-                            : 'opacity-0 group-hover:opacity-100'
+                            : 'sm:opacity-0 sm:group-hover:opacity-100'
                         )}
                       >
                         <Heart
@@ -159,7 +159,7 @@ function Home() {
                       {gist.isPublic && (
                         <button
                           aria-label="Share gist"
-                          className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="text-muted-foreground hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -189,7 +189,7 @@ function Home() {
                           }
                         }}
                         aria-label="Delete gist"
-                        className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-muted-foreground hover:text-destructive sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       >
                         <Trash className="w-4 h-4" />
                       </button>
