@@ -29,7 +29,7 @@ export const Route = createFileRoute('/gists/$id/share')({
   },
   errorComponent: ({ error }) => {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+      <div className="flex flex-col items-center justify-center min-h-screen p-3 text-center">
         <h1 className="text-4xl font-bold text-gray-100 mb-4">Oops!</h1>
         <p className="text-xl text-gray-200 mb-8">
           {error.message === 'Gist not found'

@@ -74,7 +74,7 @@ function RouteComponent() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 p-6 h-full flex flex-col"
+        className="space-y-4 p-3 h-full flex flex-col"
       >
         <FormField
           control={form.control}

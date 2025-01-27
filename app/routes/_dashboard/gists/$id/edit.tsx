@@ -109,7 +109,7 @@ function RouteComponent() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 p-4 sm:p-6 h-full flex flex-col"
+        className="space-y-4 p-4 sm:p-3 h-full flex flex-col"
       >
         <div className="flex flex-col sm:flex-row gap-4">
           <FormField
@@ -158,8 +158,8 @@ function RouteComponent() {
             control={form.control}
             name="isPublic"
             render={({ field }) => (
-              <FormItem className="flex gap-2 items-end">
-                <FormLabel className="whitespace-nowrap">Public</FormLabel>
+              <FormItem className="flex gap-2 items-end mb-2">
+                <FormLabel className="whitespace-nowrap mb-3">Public</FormLabel>
                 <FormControl>
                   <Switch
                     checked={field.value}

@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 // Menu items.
@@ -29,6 +30,8 @@ export function AppSidebar({
 }: {
   user: Partial<Pick<User, 'id' | 'email' | 'name'>>;
 }) {
+  const { setOpenMobile } = useSidebar();
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -39,7 +42,7 @@ export function AppSidebar({
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link to={item.url} onClick={() => setOpenMobile(false)}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

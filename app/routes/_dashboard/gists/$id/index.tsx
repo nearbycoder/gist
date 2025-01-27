@@ -58,13 +58,13 @@ function RouteComponent() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 flex h-full flex-col">
+    <div className="p-4 sm:p-3 space-y-6 flex h-full flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold truncate">
+        <div className="flex flex-col truncate">
+          <h1 className="text-xl sm:text-2xl font-bold truncate max-w-full">
             {gist.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-2 mt-1">
+          <div className="flex flex-wrap items-center gap-2 mt-1 max-w-full">
             <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
               {gist.language}
             </span>
@@ -75,7 +75,7 @@ function RouteComponent() {
             </span>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Button
             variant="ghost"
             size="icon"
