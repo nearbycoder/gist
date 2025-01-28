@@ -176,7 +176,7 @@ function RouteComponent() {
           control={form.control}
           name="body"
           render={({ field }) => (
-            <FormItem className="h-[calc(100%-180px)]">
+            <FormItem className="h-[calc(100%-300px)] md:h-[calc(100%-180px)]">
               <div className="flex items-center justify-between">
                 <FormLabel>Content</FormLabel>
                 <span className="text-sm text-gray-300">
@@ -197,7 +197,7 @@ function RouteComponent() {
           )}
         />
 
-        <div className="flex justify-end pt-4 sm:pt-8">
+        <div className="flex justify-end pt-4 mt-4 sm:pt-8">
           <Button type="submit" className="w-full sm:w-auto">
             Update Gist
           </Button>
