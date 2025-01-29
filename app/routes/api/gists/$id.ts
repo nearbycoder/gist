@@ -6,7 +6,8 @@ export const APIRoute = createAPIFileRoute('/api/gists/$id')({
   GET: async ({ params, request }) => {
     const { id } = params;
     const url = new URL(request.url);
-    const version = url.searchParams.get('version');
+    const version =
+      url.searchParams.get('version') || url.searchParams.get('v');
 
     const gist = await prisma.gist.findUnique({
       where: { id, isPublic: true },
