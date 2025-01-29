@@ -80,6 +80,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@tanstack/config": "^0.16.1",
+    "@tanstack/router-devtools": "^1.98.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
