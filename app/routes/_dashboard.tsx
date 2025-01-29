@@ -1,4 +1,4 @@
-import { Navigate, Outlet, createFileRoute } from '@tanstack/react-router';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -9,7 +9,9 @@ export const Route = createFileRoute('/_dashboard')({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
     if (!context.user) {
-      throw new Error('Not authenticated');
+      throw redirect({
+        to: '/auth/login',
+      });
     }
 
     return {
@@ -17,10 +19,6 @@ export const Route = createFileRoute('/_dashboard')({
     };
   },
   errorComponent: ({ error }) => {
-    if (error.message === 'Not authenticated') {
-      return <Navigate to="/auth/login" />;
-    }
-
     throw error;
   },
 });
