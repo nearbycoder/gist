@@ -76,7 +76,7 @@ function Home() {
   return (
     <div className="space-y-6">
       <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 flex-wrap">
           <GistSearch
             search={searchTerm}
             language={search.language || null}
@@ -95,7 +95,7 @@ function Home() {
               })
             }
           />
-          <Button asChild className="w-full sm:w-auto">
+          <Button asChild className="w-full sm:w-auto" size="sm">
             <Link to="/gists/new">+ New Gist</Link>
           </Button>
         </div>

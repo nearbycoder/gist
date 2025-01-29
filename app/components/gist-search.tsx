@@ -45,7 +45,7 @@ export function GistSearch({
   onFavoritesOnlyChange,
 }: GistSearchProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 flex-1">
+    <div className="flex flex-col sm:flex-row gap-4 flex-1 flex-wrap">
       <div className="relative flex-1">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
