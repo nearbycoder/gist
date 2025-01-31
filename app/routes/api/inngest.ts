@@ -1,10 +1,9 @@
 import { createAPIFileRoute } from '@tanstack/start/api';
 
-import { functions, inngest } from 'app/inngest';
-
 // temp
 import { InngestCommHandler } from 'inngest';
 import type { ServeHandlerOptions } from 'inngest';
+import { functions, inngest } from '@/workers';
 
 const serve = (options: ServeHandlerOptions) => {
   const handler = new InngestCommHandler({
