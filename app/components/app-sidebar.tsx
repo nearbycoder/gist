@@ -2,6 +2,7 @@ import { GitBranch } from 'lucide-react';
 
 import { Link } from '@tanstack/react-router';
 import { NavUser } from './ui/nav-user';
+import { ThemeToggle } from './ThemeToggle';
 import type { User } from '@prisma/client';
 import {
   Sidebar,
@@ -36,7 +37,9 @@ export function AppSidebar({
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="flex items-center justify-between">
+            Application <ThemeToggle />
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

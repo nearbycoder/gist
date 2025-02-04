@@ -1,9 +1,10 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { Outlet, ScriptOnce, createRootRoute } from '@tanstack/react-router';
 import { Meta, Scripts } from '@tanstack/start';
 import React, { Suspense } from 'react';
 import type { ReactNode } from 'react';
 import globalStyle from '@/styles/global.css?url';
 import { fetchUserFromSession } from '@/serverFunctions/auth';
+import { getThemeCookie, useThemeStore } from '@/components/ThemeToggle';
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === 'production'
@@ -60,6 +61,11 @@ export const Route = createRootRoute({
 
   component: RootComponent,
   notFoundComponent: () => <div>Not Found</div>,
+  loader: async () => {
+    return {
+      themeCookie: await getThemeCookie(),
+    };
+  },
   beforeLoad: async () => {
     const user = await fetchUserFromSession();
 
@@ -81,9 +87,24 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  const { themeCookie } = Route.useLoaderData();
+
+  React.useEffect(() => {
+    useThemeStore.setState({ mode: themeCookie });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const themeClass = themeCookie === 'dark' ? 'dark' : '';
+
   return (
-    <html className="dark">
+    <html className={themeClass}>
       <head>
+        {/* If the theme is set to auto, inject a tiny script to set the proper class on html based on the user preference */}
+        {themeCookie === 'auto' ? (
+          <ScriptOnce
+            children={`window.matchMedia('(prefers-color-scheme: dark)').matches ? document.documentElement.classList.add('dark') : null`}
+          />
+        ) : null}
         <Meta />
       </head>
       <body>
