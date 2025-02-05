@@ -102,6 +102,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         {/* If the theme is set to auto, inject a tiny script to set the proper class on html based on the user preference */}
         {themeCookie === 'auto' ? (
           <ScriptOnce
+            sync
             children={`window.matchMedia('(prefers-color-scheme: dark)').matches ? document.documentElement.classList.add('dark') : null`}
           />
         ) : null}
