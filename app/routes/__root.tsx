@@ -91,7 +91,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
   React.useEffect(() => {
     useThemeStore.setState({ mode: themeCookie });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const themeClass = themeCookie === 'dark' ? 'dark' : '';
