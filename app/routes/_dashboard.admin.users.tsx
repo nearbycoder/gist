@@ -27,7 +27,7 @@ type Role = (typeof ROLE)[keyof typeof ROLE];
 export const Route = createFileRoute('/_dashboard/admin/users')({
   component: AdminDashboard,
   beforeLoad: async ({ context }) => {
-    if (!context.user || context.user.role !== ROLE.ADMIN) {
+    if (context.user.role !== ROLE.ADMIN) {
       throw redirect({
         to: '/',
       });

@@ -1,4 +1,4 @@
-import { GitBranch, Settings, Users } from 'lucide-react';
+import { Files, GitBranch, Settings, Users } from 'lucide-react';
 
 import { Link } from '@tanstack/react-router';
 import { NavUser } from './ui/nav-user';
@@ -37,6 +37,11 @@ const adminItems = [
     title: 'User Management',
     url: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Gists Management',
+    url: '/admin/gists',
+    icon: Files,
   },
 ];
 
