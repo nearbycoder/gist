@@ -18,10 +18,16 @@ import {
 } from '@/components/ui/tooltip';
 import { fetchUsers, updateUserRole } from '@/serverFunctions/admin';
 
+const ROLE = {
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER',
+} as const;
+type Role = (typeof ROLE)[keyof typeof ROLE];
+
 export const Route = createFileRoute('/_dashboard/admin')({
   component: AdminDashboard,
   beforeLoad: async ({ context }) => {
-    if (!context.user || context.user.role !== 'ADMIN') {
+    if (!context.user || context.user.role !== ROLE.ADMIN) {
       throw redirect({
         to: '/',
       });
@@ -31,6 +37,10 @@ export const Route = createFileRoute('/_dashboard/admin')({
       users: await fetchUsers(),
       currentUserId: context.user.id,
     };
+  },
+  errorComponent: (error) => {
+    console.error(error);
+    return <div>You are not authorized to access this page</div>;
   },
 });
 
@@ -67,7 +77,7 @@ function AdminDashboard() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <Badge
-                    variant={user.role === Role.ADMIN ? 'default' : 'secondary'}
+                    variant={user.role === ROLE.ADMIN ? 'default' : 'secondary'}
                   >
                     {user.role}
                   </Badge>
