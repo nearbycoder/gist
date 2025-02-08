@@ -17,10 +17,10 @@ import { Route as DashboardIndexImport } from './routes/_dashboard/index'
 import { Route as AuthRegisterImport } from './routes/auth/register'
 import { Route as AuthLoginImport } from './routes/auth/login'
 import { Route as DashboardSettingsImport } from './routes/_dashboard.settings'
-import { Route as DashboardAdminImport } from './routes/_dashboard.admin'
 import { Route as DashboardGistsIndexImport } from './routes/_dashboard/gists/index'
 import { Route as GistsIdShareImport } from './routes/gists/$id.share'
 import { Route as DashboardGistsNewImport } from './routes/_dashboard/gists/new'
+import { Route as DashboardAdminUsersImport } from './routes/_dashboard.admin.users'
 import { Route as DashboardGistsIdIndexImport } from './routes/_dashboard/gists/$id/index'
 import { Route as DashboardGistsIdEditImport } from './routes/_dashboard/gists/$id/edit'
 
@@ -61,12 +61,6 @@ const DashboardSettingsRoute = DashboardSettingsImport.update({
   getParentRoute: () => DashboardRoute,
 } as any)
 
-const DashboardAdminRoute = DashboardAdminImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => DashboardRoute,
-} as any)
-
 const DashboardGistsIndexRoute = DashboardGistsIndexImport.update({
   id: '/gists/',
   path: '/gists/',
@@ -82,6 +76,12 @@ const GistsIdShareRoute = GistsIdShareImport.update({
 const DashboardGistsNewRoute = DashboardGistsNewImport.update({
   id: '/gists/new',
   path: '/gists/new',
+  getParentRoute: () => DashboardRoute,
+} as any)
+
+const DashboardAdminUsersRoute = DashboardAdminUsersImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
   getParentRoute: () => DashboardRoute,
 } as any)
 
@@ -115,13 +115,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/_dashboard/admin': {
-      id: '/_dashboard/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof DashboardAdminImport
-      parentRoute: typeof DashboardImport
-    }
     '/_dashboard/settings': {
       id: '/_dashboard/settings'
       path: '/settings'
@@ -148,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardImport
+    }
+    '/_dashboard/admin/users': {
+      id: '/_dashboard/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof DashboardAdminUsersImport
       parentRoute: typeof DashboardImport
     }
     '/_dashboard/gists/new': {
@@ -191,9 +191,9 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface DashboardRouteChildren {
-  DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
   DashboardGistsNewRoute: typeof DashboardGistsNewRoute
   DashboardGistsIndexRoute: typeof DashboardGistsIndexRoute
   DashboardGistsIdEditRoute: typeof DashboardGistsIdEditRoute
@@ -201,9 +201,9 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardAdminRoute: DashboardAdminRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardAdminUsersRoute: DashboardAdminUsersRoute,
   DashboardGistsNewRoute: DashboardGistsNewRoute,
   DashboardGistsIndexRoute: DashboardGistsIndexRoute,
   DashboardGistsIdEditRoute: DashboardGistsIdEditRoute,
@@ -229,11 +229,11 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 export interface FileRoutesByFullPath {
   '': typeof DashboardRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
-  '/admin': typeof DashboardAdminRoute
   '/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof DashboardIndexRoute
+  '/admin/users': typeof DashboardAdminUsersRoute
   '/gists/new': typeof DashboardGistsNewRoute
   '/gists/$id/share': typeof GistsIdShareRoute
   '/gists': typeof DashboardGistsIndexRoute
@@ -243,11 +243,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
-  '/admin': typeof DashboardAdminRoute
   '/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof DashboardIndexRoute
+  '/admin/users': typeof DashboardAdminUsersRoute
   '/gists/new': typeof DashboardGistsNewRoute
   '/gists/$id/share': typeof GistsIdShareRoute
   '/gists': typeof DashboardGistsIndexRoute
@@ -259,11 +259,11 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_dashboard': typeof DashboardRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
-  '/_dashboard/admin': typeof DashboardAdminRoute
   '/_dashboard/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/admin/users': typeof DashboardAdminUsersRoute
   '/_dashboard/gists/new': typeof DashboardGistsNewRoute
   '/gists/$id/share': typeof GistsIdShareRoute
   '/_dashboard/gists/': typeof DashboardGistsIndexRoute
@@ -276,11 +276,11 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/auth'
-    | '/admin'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/'
+    | '/admin/users'
     | '/gists/new'
     | '/gists/$id/share'
     | '/gists'
@@ -289,11 +289,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
-    | '/admin'
     | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/'
+    | '/admin/users'
     | '/gists/new'
     | '/gists/$id/share'
     | '/gists'
@@ -303,11 +303,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_dashboard'
     | '/auth'
-    | '/_dashboard/admin'
     | '/_dashboard/settings'
     | '/auth/login'
     | '/auth/register'
     | '/_dashboard/'
+    | '/_dashboard/admin/users'
     | '/_dashboard/gists/new'
     | '/gists/$id/share'
     | '/_dashboard/gists/'
@@ -346,9 +346,9 @@ export const routeTree = rootRoute
     "/_dashboard": {
       "filePath": "_dashboard.tsx",
       "children": [
-        "/_dashboard/admin",
         "/_dashboard/settings",
         "/_dashboard/",
+        "/_dashboard/admin/users",
         "/_dashboard/gists/new",
         "/_dashboard/gists/",
         "/_dashboard/gists/$id/edit",
@@ -361,10 +361,6 @@ export const routeTree = rootRoute
         "/auth/login",
         "/auth/register"
       ]
-    },
-    "/_dashboard/admin": {
-      "filePath": "_dashboard.admin.tsx",
-      "parent": "/_dashboard"
     },
     "/_dashboard/settings": {
       "filePath": "_dashboard.settings.tsx",
@@ -380,6 +376,10 @@ export const routeTree = rootRoute
     },
     "/_dashboard/": {
       "filePath": "_dashboard/index.tsx",
+      "parent": "/_dashboard"
+    },
+    "/_dashboard/admin/users": {
+      "filePath": "_dashboard.admin.users.tsx",
       "parent": "/_dashboard"
     },
     "/_dashboard/gists/new": {

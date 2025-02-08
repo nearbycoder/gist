@@ -35,7 +35,7 @@ const items = [
 const adminItems = [
   {
     title: 'User Management',
-    url: '/admin',
+    url: '/admin/users',
     icon: Users,
   },
 ];
