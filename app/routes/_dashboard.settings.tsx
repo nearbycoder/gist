@@ -162,6 +162,7 @@ function SettingsPage() {
                     <FormControl>
                       <Input
                         type="password"
+                        autoComplete="current-password"
                         placeholder="Current password"
                         {...field}
                       />
@@ -179,6 +180,7 @@ function SettingsPage() {
                     <FormControl>
                       <Input
                         type="password"
+                        autoComplete="new-password"
                         placeholder="New password"
                         {...field}
                       />
@@ -196,6 +198,7 @@ function SettingsPage() {
                     <FormControl>
                       <Input
                         type="password"
+                        autoComplete="new-password"
                         placeholder="Confirm new password"
                         {...field}
                       />
