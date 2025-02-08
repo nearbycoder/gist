@@ -111,7 +111,10 @@ function SettingsPage() {
         <CardContent>
           <Form {...nameForm}>
             <form
-              onSubmit={nameForm.handleSubmit(onUpdateName)}
+              onSubmit={(e) => {
+                e.preventDefault();
+                nameForm.handleSubmit(onUpdateName)(e);
+              }}
               className="space-y-4"
             >
               <Label>Email</Label>
