@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Role } from '@prisma/client';
 import {
   Table,
   TableBody,
@@ -22,7 +21,7 @@ import { fetchUsers, updateUserRole } from '@/serverFunctions/admin';
 export const Route = createFileRoute('/_dashboard/admin')({
   component: AdminDashboard,
   beforeLoad: async ({ context }) => {
-    if (!context.user || context.user.role !== Role.ADMIN) {
+    if (!context.user || context.user.role !== 'ADMIN') {
       throw redirect({
         to: '/',
       });
