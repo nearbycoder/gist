@@ -14,7 +14,8 @@
     "lint-fix": "eslint . --fix",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "make-admin": "tsx scripts/make-admin.ts"
   },
   "keywords": [],
   "author": "",
@@ -95,6 +96,7 @@
     "globals": "^15.14.0",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.4",
+    "tsx": "^4.7.1",
     "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
