@@ -29,7 +29,7 @@ function RouteComponent() {
   return (
     <SidebarProvider>
       <AppSidebar user={user} />
-      <main className="w-full h-screen overflow-hidden">
+      <main className="w-full h-screen">
         <div className="flex items-center justify-between p-2">
           <SidebarTrigger />
         </div>

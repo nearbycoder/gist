@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import globalStyle from '@/styles/global.css?url';
 import { fetchUserFromSession } from '@/serverFunctions/auth';
 import { getThemeCookie, useThemeStore } from '@/components/ThemeToggle';
+import { Toaster } from '@/components/ui/toaster';
 
 const TanStackRouterDevtools =
   process.env.NODE_ENV === 'production'
@@ -109,6 +110,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         {children}
+        <Toaster />
         <Scripts />
       </body>
     </html>

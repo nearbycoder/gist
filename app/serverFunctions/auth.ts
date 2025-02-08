@@ -28,6 +28,7 @@ export const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
         id: true,
         email: true,
         name: true,
+        role: true,
       },
     });
     // eslint-disable-next-line unused-imports/no-unused-vars
@@ -129,3 +130,76 @@ export const logOut = createServerFn({ method: 'POST' }).handler(async () => {
     success: true,
   };
 });
+
+export const UpdateUserName = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+});
+
+export const updateUserName = createServerFn({ method: 'POST' })
+  .validator(zodValidator(UpdateUserName))
+  .handler(async ({ data }) => {
+    const session = await useAppSession();
+
+    if (!session.data.userEmail) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await prisma.user.update({
+      where: { email: session.data.userEmail },
+      data: { name: data.name },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+      },
+    });
+
+    return user;
+  });
+
+export const UpdatePassword = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmNewPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "New passwords don't match",
+    path: ['confirmNewPassword'],
+  });
+
+export const updatePassword = createServerFn({ method: 'POST' })
+  .validator(zodValidator(UpdatePassword))
+  .handler(async ({ data }) => {
+    const session = await useAppSession();
+
+    if (!session.data.userEmail) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { email: session.data.userEmail },
+    });
+
+    if (!user || (await hashPassword(data.currentPassword)) !== user.password) {
+      return {
+        data: {
+          error: 'Current password is incorrect',
+        },
+      };
+    }
+
+    const hashedNewPassword = await hashPassword(data.newPassword);
+
+    await prisma.user.update({
+      where: { email: session.data.userEmail },
+      data: { password: hashedNewPassword },
+    });
+
+    return { success: true };
+  });

@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  MEMBER
+  ADMIN
+}
+
 model Gist {
   id          String    @id @default(cuid())
   title       String
@@ -38,6 +43,7 @@ model User {
   email     String  @unique
   password  String
   name      String?
+  role      Role    @default(MEMBER)
   gists     Gist[]  @relation("UserGists")
   favorites Gist[]  @relation("UserFavorites")
 }

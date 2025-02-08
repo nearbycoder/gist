@@ -1,4 +1,4 @@
-import { GitBranch } from 'lucide-react';
+import { GitBranch, Settings, Users } from 'lucide-react';
 
 import { Link } from '@tanstack/react-router';
 import { NavUser } from './ui/nav-user';
@@ -24,12 +24,26 @@ const items = [
     url: '/',
     icon: GitBranch,
   },
+  {
+    title: 'Settings',
+    url: '/settings',
+    icon: Settings,
+  },
+];
+
+// Admin menu items
+const adminItems = [
+  {
+    title: 'User Management',
+    url: '/admin',
+    icon: Users,
+  },
 ];
 
 export function AppSidebar({
   user,
 }: {
-  user: Partial<Pick<User, 'id' | 'email' | 'name'>>;
+  user: Partial<Pick<User, 'id' | 'email' | 'name' | 'role'>>;
 }) {
   const { setOpenMobile } = useSidebar();
 
@@ -55,6 +69,26 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {user.role === 'ADMIN' && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link to={item.url} onClick={() => setOpenMobile(false)}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser
