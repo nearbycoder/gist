@@ -94,9 +94,9 @@ function AdminDashboard() {
                             onClick={() =>
                               handleRoleToggle(
                                 user.id,
-                                user.role === Role.ADMIN
-                                  ? Role.MEMBER
-                                  : Role.ADMIN
+                                user.role === ROLE.ADMIN
+                                  ? ROLE.MEMBER
+                                  : ROLE.ADMIN
                               )
                             }
                           >
