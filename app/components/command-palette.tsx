@@ -13,6 +13,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { getGists } from '@/serverFunctions/gists';
+import { languageDisplayNames } from '@/config/languages';
 
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false);
@@ -91,7 +92,9 @@ export function CommandPalette() {
               <Search className="mr-2 h-4 w-4" />
               <span>{gist.title}</span>
               <span className="ml-2 text-xs text-muted-foreground">
-                {gist.language}
+                {gist.language
+                  ? languageDisplayNames[gist.language]
+                  : 'No language'}
               </span>
             </CommandItem>
           ))}

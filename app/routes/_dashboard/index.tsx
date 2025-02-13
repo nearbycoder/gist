@@ -7,6 +7,7 @@ import { deleteGist, getGists, toggleFavorite } from '@/serverFunctions/gists';
 import { GistSearch } from '@/components/gist-search';
 import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/libs/utils';
+import { languageDisplayNames } from '@/config/languages';
 
 const searchSchema = z.object({
   search: z.string().optional(),
@@ -197,7 +198,9 @@ function Home() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span className="bg-muted px-2 py-1 rounded text-foreground">
-                      {gist.language || 'No language'}
+                      {gist.language
+                        ? languageDisplayNames[gist.language]
+                        : 'No language'}
                     </span>
                     <span>•</span>
                     <span>

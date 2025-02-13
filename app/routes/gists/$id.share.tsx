@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getPublicGist } from '@/serverFunctions/gists';
+import { languageDisplayNames } from '@/config/languages';
 
 export const Route = createFileRoute('/gists/$id/share')({
   component: RouteComponent,
@@ -63,7 +64,9 @@ function RouteComponent() {
           <h1 className="text-2xl font-bold">{gist.title}</h1>
           <div className="flex items-center space-x-2 mt-1">
             <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-              {gist.language}
+              {gist.language
+                ? languageDisplayNames[gist.language]
+                : 'No language'}
             </span>
             <span className="text-gray-300">•</span>
             <span className="text-gray-300">

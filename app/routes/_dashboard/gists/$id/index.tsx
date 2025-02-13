@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { deleteGist, getGist, toggleFavorite } from '@/serverFunctions/gists';
 import { cn } from '@/libs/utils';
+import { languageDisplayNames } from '@/config/languages';
 
 export const Route = createFileRoute('/_dashboard/gists/$id/')({
   component: RouteComponent,
@@ -66,7 +67,9 @@ function RouteComponent() {
           </h1>
           <div className="flex flex-wrap items-center gap-2 mt-1 max-w-full">
             <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
-              {gist.language}
+              {gist.language
+                ? languageDisplayNames[gist.language]
+                : 'No language'}
             </span>
             <span className="text-gray-300 hidden sm:inline">•</span>
             <span className="text-gray-300">

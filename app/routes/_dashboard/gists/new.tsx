@@ -2,7 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { validLanguages } from './$id/edit';
+import { languageDisplayNames, validLanguages } from '@/config/languages';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Editor } from '@/components/Editor.client';
@@ -27,19 +27,7 @@ import {
 const GistSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().min(1, 'Content is required'),
-  language: z.enum([
-    'typescript',
-    'javascript',
-    'python',
-    'rust',
-    'go',
-    'java',
-    'csharp',
-    'php',
-    'ruby',
-    'swift',
-    'sql',
-  ]),
+  language: z.enum(validLanguages),
   isPublic: z.boolean(),
 });
 
@@ -104,9 +92,9 @@ function RouteComponent() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {validLanguages.map((language) => (
-                    <SelectItem key={language} value={language}>
-                      {language.charAt(0).toUpperCase() + language.slice(1)}
+                  {validLanguages.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {languageDisplayNames[lang]}
                     </SelectItem>
                   ))}
                 </SelectContent>

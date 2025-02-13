@@ -9,20 +9,7 @@ import {
 } from './ui/select';
 import { Label } from './ui/label';
 import { Switch } from './ui/switch';
-
-export const validLanguages = [
-  'typescript',
-  'javascript',
-  'python',
-  'rust',
-  'go',
-  'java',
-  'csharp',
-  'php',
-  'ruby',
-  'swift',
-  'sql',
-] as const;
+import { languageDisplayNames, validLanguages } from '@/config/languages';
 
 export interface GistSearchProps {
   search: string;
@@ -68,14 +55,11 @@ export function GistSearch({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="-">All languages</SelectItem>
-            <SelectItem value="javascript">JavaScript</SelectItem>
-            <SelectItem value="typescript">TypeScript</SelectItem>
-            <SelectItem value="python">Python</SelectItem>
-            <SelectItem value="ruby">Ruby</SelectItem>
-            <SelectItem value="java">Java</SelectItem>
-            <SelectItem value="go">Go</SelectItem>
-            <SelectItem value="rust">Rust</SelectItem>
-            <SelectItem value="sql">SQL</SelectItem>
+            {validLanguages.map((lang) => (
+              <SelectItem key={lang} value={lang}>
+                {languageDisplayNames[lang]}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <div className="flex flex-row sm:flex-row gap-4 justify-between sm:justify-start">

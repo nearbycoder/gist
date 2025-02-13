@@ -2,6 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { languageDisplayNames, validLanguages } from '@/config/languages';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,21 +27,11 @@ import { getGist, updateGist } from '@/serverFunctions/gists';
 const EditGistSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   body: z.string().min(1, 'Content is required'),
-  language: z.enum([
-    'typescript',
-    'javascript',
-    'python',
-    'rust',
-    'go',
-    'java',
-    'csharp',
-    'php',
-    'ruby',
-    'swift',
-    'sql',
-  ]),
+  language: z.enum(validLanguages),
   isPublic: z.boolean(),
 });
+
+type EditGistFormValues = z.infer<typeof EditGistSchema>;
 
 export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
   component: RouteComponent,
@@ -58,20 +49,6 @@ export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
     return gist;
   },
 });
-
-export const validLanguages = [
-  'typescript',
-  'javascript',
-  'python',
-  'rust',
-  'go',
-  'java',
-  'csharp',
-  'php',
-  'ruby',
-  'swift',
-  'sql',
-] as const;
 
 function RouteComponent() {
   const gist = Route.useLoaderData();
@@ -146,7 +123,7 @@ function RouteComponent() {
                   <SelectContent>
                     {validLanguages.map((language) => (
                       <SelectItem key={language} value={language}>
-                        {language.charAt(0).toUpperCase() + language.slice(1)}
+                        {languageDisplayNames[language]}
                       </SelectItem>
                     ))}
                   </SelectContent>

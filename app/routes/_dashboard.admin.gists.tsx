@@ -27,21 +27,18 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
+import { languageDisplayNames } from '@/config/languages';
 
 const ROLE = {
   ADMIN: 'ADMIN',
   MEMBER: 'MEMBER',
 } as const;
 
-type Role = (typeof ROLE)[keyof typeof ROLE];
-
-type GistsResponse = Awaited<ReturnType<typeof fetchAllGists>>;
-
 export const Route = createFileRoute('/_dashboard/admin/gists')({
   component: AdminGists,
   beforeLoad: async ({ context }) => {
     const user = context.user;
-    if (!user || !('role' in user) || user.role !== ROLE.ADMIN) {
+    if (!('role' in user) || user.role !== ROLE.ADMIN) {
       throw redirect({
         to: '/',
       });
@@ -68,7 +65,7 @@ function AdminGists() {
   const [selectedUser, setSelectedUser] = useState('all');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 300);
-  const [currentData, setCurrentData] = useState<GistsResponse>(gistsData);
+  const [currentData, setCurrentData] = useState<typeof gistsData>(gistsData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,7 +128,11 @@ function AdminGists() {
             {currentData.gists.map((gist) => (
               <TableRow key={gist.id}>
                 <TableCell>{gist.title}</TableCell>
-                <TableCell>{gist.language || 'Plain Text'}</TableCell>
+                <TableCell>
+                  {gist.language
+                    ? languageDisplayNames[gist.language]
+                    : 'Plain Text'}
+                </TableCell>
                 <TableCell>
                   <Badge variant={gist.isPublic ? 'default' : 'secondary'}>
                     {gist.isPublic ? 'Public' : 'Private'}
