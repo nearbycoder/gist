@@ -37,6 +37,7 @@ const EditGistSchema = z.object({
     'php',
     'ruby',
     'swift',
+    'sql',
   ]),
   isPublic: z.boolean(),
 });
@@ -69,6 +70,7 @@ export const validLanguages = [
   'php',
   'ruby',
   'swift',
+  'sql',
 ] as const;
 
 function RouteComponent() {

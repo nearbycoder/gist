@@ -38,6 +38,7 @@ const GistSchema = z.object({
     'php',
     'ruby',
     'swift',
+    'sql',
   ]),
   isPublic: z.boolean(),
 });

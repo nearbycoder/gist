@@ -21,6 +21,7 @@ export const validLanguages = [
   'php',
   'ruby',
   'swift',
+  'sql',
 ] as const;
 
 export interface GistSearchProps {
@@ -74,6 +75,7 @@ export function GistSearch({
             <SelectItem value="java">Java</SelectItem>
             <SelectItem value="go">Go</SelectItem>
             <SelectItem value="rust">Rust</SelectItem>
+            <SelectItem value="sql">SQL</SelectItem>
           </SelectContent>
         </Select>
         <div className="flex flex-row sm:flex-row gap-4 justify-between sm:justify-start">
