@@ -1,5 +1,10 @@
-import { Outlet, ScriptOnce, createRootRoute } from '@tanstack/react-router';
-import { Meta, Scripts } from '@tanstack/start';
+import {
+  HeadContent,
+  Outlet,
+  ScriptOnce,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router';
 import React, { Suspense } from 'react';
 import type { ReactNode } from 'react';
 import globalStyle from '@/styles/global.css?url';
@@ -106,7 +111,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             children={`window.matchMedia('(prefers-color-scheme: dark)').matches ? document.documentElement.classList.add('dark') : null`}
           />
         ) : null}
-        <Meta />
+        <HeadContent />
       </head>
       <body>
         {children}

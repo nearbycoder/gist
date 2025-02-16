@@ -23,8 +23,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@hookform/resolvers": "^4.0.0",
-    "@monaco-editor/react": "^4.7.0-rc.0",
+    "@hookform/resolvers": "^4.1.0",
+    "@monaco-editor/react": "^4.7.0",
     "@prisma/client": "^6.3.1",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -53,10 +53,10 @@
     "@radix-ui/react-toggle": "^1.1.2",
     "@radix-ui/react-toggle-group": "^1.1.2",
     "@radix-ui/react-tooltip": "^1.1.8",
-    "@tanstack/react-router": "1.102.5",
-    "@tanstack/start": "1.103.0",
-    "@tanstack/zod-adapter": "1.102.5",
-    "@trigger.dev/sdk": "^3.3.15",
+    "@tanstack/react-router": "1.105.0",
+    "@tanstack/start": "1.105.3",
+    "@tanstack/zod-adapter": "1.105.0",
+    "@trigger.dev/sdk": "^3.3.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
@@ -90,9 +90,9 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.6",
     "@tanstack/config": "^0.16.2",
-    "@tanstack/router-devtools": "^1.102.5",
-    "@trigger.dev/build": "^3.3.15",
-    "@types/react": "^19.0.8",
+    "@tanstack/router-devtools": "^1.105.0",
+    "@trigger.dev/build": "^3.3.16",
+    "@types/react": "^19.0.9",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint-plugin-unused-imports": "^4.1.4",
@@ -104,6 +104,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.34.6"
+    "@rollup/rollup-linux-x64-gnu": "^4.34.7"
   }
 }
