@@ -92,8 +92,8 @@
     "@tanstack/config": "^0.16.2",
     "@tanstack/router-devtools": "^1.105.0",
     "@trigger.dev/build": "^3.3.16",
-    "@types/react": "^19.0.9",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^15.15.0",
@@ -104,6 +104,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.34.7"
+    "@rollup/rollup-linux-x64-gnu": "^4.34.8"
   }
 }
