@@ -1,6 +1,6 @@
 import { createAPIFileRoute } from '@tanstack/start/api';
 import { json } from '@tanstack/start';
-import { prisma } from '@/libs/db';
+import { prisma } from '@/lib/db';
 
 export const APIRoute = createAPIFileRoute('/api/gists/$id')({
   GET: async ({ params, request }) => {

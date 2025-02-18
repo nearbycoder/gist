@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { deleteGist, getGist, toggleFavorite } from '@/serverFunctions/gists';
-import { cn } from '@/libs/utils';
+import { cn } from '@/lib/utils';
 import { languageDisplayNames } from '@/config/languages';
 
 export const Route = createFileRoute('/_dashboard/gists/$id/')({

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -21,13 +21,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import {
-  UpdatePassword,
   UpdateUserName,
   fetchUser,
-  updatePassword,
   updateUserName,
 } from '@/serverFunctions/auth';
 import { Label } from '@/components/ui/label';
+import { authClient } from '@/lib/auth-client';
+
+export const UpdatePassword = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmNewPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters'),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "New passwords don't match",
+    path: ['confirmNewPassword'],
+  });
 
 export const Route = createFileRoute('/_dashboard/settings')({
   component: SettingsPage,
@@ -76,11 +90,14 @@ function SettingsPage() {
 
   const onUpdatePassword = async (values: z.infer<typeof UpdatePassword>) => {
     try {
-      const result = await updatePassword({ data: values });
-      if (result.data?.error) {
+      const result = await authClient.changePassword({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      });
+      if (result.error) {
         toast({
           title: 'Error',
-          description: result.data.error,
+          description: result.error.message,
           variant: 'destructive',
         });
         return;

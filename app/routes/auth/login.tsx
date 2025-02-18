@@ -1,7 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -12,8 +12,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { parseError } from '@/libs/utils';
-import { UserLogin, loginUser } from '@/serverFunctions/auth';
+import { authClient } from '@/lib/auth-client';
+
+export const UserLogin = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
 
 export const Route = createFileRoute('/auth/login')({
   component: RouteComponent,
@@ -38,23 +42,25 @@ function RouteComponent() {
             form.clearErrors();
             innerForm.preventDefault();
             const formData = new FormData(innerForm.target as HTMLFormElement);
-            loginUser({
-              data: Object.fromEntries(formData) as {
-                email: string;
-                password: string;
+
+            authClient.signIn.email(
+              {
+                email: formData.get('email') as string,
+                password: formData.get('password') as string,
               },
-            })
-              .then((result) => {
-                if ('data' in result && 'error' in result.data) {
-                  form.setError('email', { message: result.data.error });
-                } else {
+              {
+                onSuccess: () => {
                   router.navigate({ to: '/' });
                   form.reset();
-                }
-              })
-              .catch((error) => {
-                parseError(form, error);
-              });
+                },
+                onError: (error) => {
+                  console.log('error', error);
+                  form.setError('email', {
+                    message: error.error.message,
+                  });
+                },
+              }
+            );
           }}
           className="flex flex-col gap-4 max-w-md mx-auto w-full"
         >

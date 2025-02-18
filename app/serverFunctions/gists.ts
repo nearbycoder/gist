@@ -1,15 +1,15 @@
 import { createMiddleware, createServerFn } from '@tanstack/start';
 import { z } from 'zod';
 import { zodValidator } from '@tanstack/zod-adapter';
-import { prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
+import { prisma } from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 // Middleware
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
-  const session = await useAppSession();
+  const session = await getSession();
 
   const user = await prisma.user.findFirst({
-    where: { email: session.data.userEmail },
+    where: { email: session?.user.email },
     select: {
       id: true,
       email: true,

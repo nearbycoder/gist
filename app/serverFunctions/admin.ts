@@ -1,15 +1,15 @@
 import { createMiddleware, createServerFn } from '@tanstack/start';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { z } from 'zod';
-import { prisma } from '@/libs/db';
-import { useAppSession } from '@/libs/session';
+import { prisma } from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 // Middleware to ensure only admin users can access these functions
 const adminMiddleware = createMiddleware().server(async ({ next }) => {
-  const session = await useAppSession();
+  const session = await getSession();
 
   const user = await prisma.user.findFirst({
-    where: { email: session.data.userEmail },
+    where: { email: session?.user.email },
   });
 
   if (!user || user.role !== 'ADMIN') {

@@ -1,7 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -12,8 +12,18 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { parseError } from '@/libs/utils';
-import { UserRegister, registerUser } from '@/serverFunctions/auth';
+import { authClient } from '@/lib/auth-client';
+
+export const UserRegister = z
+  .object({
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirm: z.string().min(8, 'Password must be at least 8 characters'),
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords don't match",
+    path: ['confirm'],
+  });
 
 export const Route = createFileRoute('/auth/register')({
   component: RouteComponent,
@@ -38,24 +48,33 @@ function RouteComponent() {
             form.clearErrors();
             innerForm.preventDefault();
             const formData = new FormData(innerForm.target as HTMLFormElement);
-            registerUser({
-              data: Object.fromEntries(formData) as {
-                email: string;
-                password: string;
-                confirm: string;
+
+            if (formData.get('password') !== formData.get('confirm')) {
+              form.setError('confirm', {
+                message: 'Passwords do not match',
+              });
+              return;
+            }
+
+            authClient.signUp.email(
+              {
+                email: formData.get('email') as string,
+                password: formData.get('password') as string,
+                name: formData.get('email') as string,
               },
-            })
-              .then((result) => {
-                if ('data' in result && 'error' in result.data) {
-                  form.setError('email', { message: result.data.error });
-                } else {
+              {
+                onSuccess: () => {
                   router.navigate({ to: '/' });
                   form.reset();
-                }
-              })
-              .catch((error) => {
-                parseError(form, error);
-              });
+                },
+                onError: (error) => {
+                  console.log('error', error);
+                  form.setError('email', {
+                    message: error.error.message,
+                  });
+                },
+              }
+            );
           }}
           className="flex flex-col gap-4 max-w-md mx-auto w-full"
         >

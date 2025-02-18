@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { logOut } from '@/serverFunctions/auth';
+import { authClient } from '@/lib/auth-client';
 
 export function NavUser({
   user,
@@ -85,7 +85,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
-                await logOut();
+                await authClient.signOut();
                 router.navigate({ to: '/auth/login' });
               }}
             >

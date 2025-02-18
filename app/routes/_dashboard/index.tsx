@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { deleteGist, getGists, toggleFavorite } from '@/serverFunctions/gists';
 import { GistSearch } from '@/components/gist-search';
 import { useDebounce } from '@/hooks/use-debounce';
-import { cn } from '@/libs/utils';
+import { cn } from '@/lib/utils';
 import { languageDisplayNames } from '@/config/languages';
 
 const searchSchema = z.object({
