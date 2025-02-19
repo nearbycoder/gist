@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
+import { MoreVertical } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -80,7 +81,7 @@ function AdminDashboard() {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -95,14 +96,18 @@ function AdminDashboard() {
                     {user.role}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-right justify-end flex">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              Actions
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="flex items-center gap-2"
+                            >
+                              <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
