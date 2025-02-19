@@ -1,6 +1,6 @@
-import { Files, GitBranch, Settings, Users } from 'lucide-react';
+import { Files, GitBranch, LogOut, Settings, Users } from 'lucide-react';
 
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { NavUser } from './ui/nav-user';
 import { ThemeToggle } from './ThemeToggle';
 import type { User } from '@prisma/client';
@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { authClient } from '@/lib/auth-client';
 
 // Menu items.
 const items = [
@@ -48,9 +49,12 @@ const adminItems = [
 export function AppSidebar({
   user,
 }: {
-  user: Partial<Pick<User, 'id' | 'email' | 'name' | 'role'>>;
+  user: Partial<Pick<User, 'id' | 'email' | 'name' | 'role'>> & {
+    impersonatedBy?: string;
+  };
 }) {
   const { setOpenMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <Sidebar>
@@ -75,7 +79,7 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {user.role === 'ADMIN' && (
+        {user.role === 'admin' && (
           <SidebarGroup>
             <SidebarGroupLabel>Admin</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -90,6 +94,33 @@ export function AppSidebar({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+        {user.impersonatedBy && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Actions</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link
+                      to="/"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        setOpenMobile(false);
+
+                        await authClient.admin.stopImpersonating();
+
+                        router.navigate({ to: '/' });
+                      }}
+                    >
+                      <LogOut />
+                      <span>Stop Impersonating</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

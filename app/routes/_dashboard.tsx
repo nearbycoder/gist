@@ -8,7 +8,7 @@ import { CommandPalette } from '@/components/command-palette';
 export const Route = createFileRoute('/_dashboard')({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    if (!context.user) {
+    if (!context.email) {
       throw redirect({
         to: '/auth/login',
       });

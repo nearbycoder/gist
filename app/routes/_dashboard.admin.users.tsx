@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import {
   Table,
@@ -17,10 +17,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { fetchUsers, updateUserRole } from '@/serverFunctions/admin';
+import { authClient } from '@/lib/auth-client';
 
 const ROLE = {
-  ADMIN: 'ADMIN',
-  MEMBER: 'MEMBER',
+  ADMIN: 'admin',
+  MEMBER: 'member',
 } as const;
 type Role = (typeof ROLE)[keyof typeof ROLE];
 
@@ -39,13 +40,13 @@ export const Route = createFileRoute('/_dashboard/admin/users')({
     };
   },
   errorComponent: (error) => {
-    console.error(error);
     return <div>You are not authorized to access this page</div>;
   },
 });
 
 function AdminDashboard() {
   const { users: initialUsers, currentUserId } = Route.useRouteContext();
+  const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
 
   const handleRoleToggle = async (userId: string, newRole: Role) => {
@@ -55,6 +56,12 @@ function AdminDashboard() {
         user.id === userId ? { ...user, role: newRole } : user
       )
     );
+  };
+
+  const impersonateUser = async (userId: string) => {
+    await authClient.admin.impersonateUser({
+      userId,
+    });
   };
 
   return (
@@ -101,6 +108,16 @@ function AdminDashboard() {
                             }
                           >
                             Toggle Role
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={async () => {
+                              await impersonateUser(user.id);
+                              router.navigate({ to: '/' });
+                            }}
+                          >
+                            Impersonate
                           </Button>
                         </span>
                       </TooltipTrigger>

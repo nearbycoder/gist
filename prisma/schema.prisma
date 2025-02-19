@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  MEMBER
-  ADMIN
-}
-
 model Gist {
   id          String    @id @default(cuid())
   title       String
@@ -42,7 +37,7 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String?
-  role          Role      @default(MEMBER)
+  role          String    @default("user")
   gists         Gist[]    @relation("UserGists")
   favorites     Gist[]    @relation("UserFavorites")
   emailVerified Boolean
@@ -51,6 +46,10 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
 
   @@map("user")
 }
@@ -65,6 +64,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")

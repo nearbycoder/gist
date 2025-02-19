@@ -73,10 +73,11 @@ export const Route = createRootRoute({
     };
   },
   beforeLoad: async () => {
-    const user = await fetchUserFromSession();
+    const { email, impersonatedBy } = await fetchUserFromSession();
 
     return {
-      user,
+      email,
+      impersonatedBy,
     };
   },
 });

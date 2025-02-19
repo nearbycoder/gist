@@ -30,8 +30,8 @@ import { Button } from '@/components/ui/button';
 import { languageDisplayNames } from '@/config/languages';
 
 const ROLE = {
-  ADMIN: 'ADMIN',
-  MEMBER: 'MEMBER',
+  ADMIN: 'admin',
+  USER: 'user',
 } as const;
 
 export const Route = createFileRoute('/_dashboard/admin/gists')({
@@ -61,6 +61,7 @@ export const Route = createFileRoute('/_dashboard/admin/gists')({
 
 function AdminGists() {
   const { gistsData, users } = Route.useRouteContext();
+
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState('all');
   const [page, setPage] = useState(1);

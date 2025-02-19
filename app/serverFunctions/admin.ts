@@ -12,7 +12,7 @@ const adminMiddleware = createMiddleware().server(async ({ next }) => {
     where: { email: session?.user.email },
   });
 
-  if (!user || user.role !== 'ADMIN') {
+  if (!user || user.role !== 'admin') {
     throw new Error('Unauthorized: Admin access required');
   }
 
@@ -51,7 +51,7 @@ export const updateUserRole = createServerFn({
     zodValidator(
       z.object({
         userId: z.string(),
-        role: z.enum(['ADMIN', 'MEMBER']),
+        role: z.enum(['admin', 'member']),
       })
     )
   )

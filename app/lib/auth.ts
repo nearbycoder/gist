@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { PrismaClient } from '@prisma/client';
 import { getWebRequest } from '@tanstack/start/server';
+import { admin } from 'better-auth/plugins';
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -17,6 +18,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  plugins: [admin()],
 });
 
 export const getSession = async () => {

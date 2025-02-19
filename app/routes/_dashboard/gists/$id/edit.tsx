@@ -31,8 +31,6 @@ const EditGistSchema = z.object({
   isPublic: z.boolean(),
 });
 
-type EditGistFormValues = z.infer<typeof EditGistSchema>;
-
 export const Route = createFileRoute('/_dashboard/gists/$id/edit')({
   component: RouteComponent,
   loader: async ({ params }) => {

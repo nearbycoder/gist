@@ -10,11 +10,12 @@ export const fetchUserFromSession = createServerFn({ method: 'GET' }).handler(
     const session = await getSession();
 
     if (!session?.user.email) {
-      return null;
+      return { email: null, impersonatedBy: null };
     }
 
     return {
       email: session.user.email,
+      impersonatedBy: session.session.impersonatedBy,
     };
   }
 );
@@ -22,16 +23,22 @@ export const fetchUserFromSession = createServerFn({ method: 'GET' }).handler(
 export const fetchUser = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await getSession();
 
+  const user = await prisma.user.findFirstOrThrow({
+    where: { email: session?.user.email },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      role: true,
+    },
+  });
+
   try {
-    return await prisma.user.findFirstOrThrow({
-      where: { email: session?.user.email },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-      },
-    });
+    return {
+      ...user,
+      impersonatedBy: session?.session.impersonatedBy,
+    };
+
     // eslint-disable-next-line unused-imports/no-unused-vars
   } catch (error) {
     if (session?.session.token) {

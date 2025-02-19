@@ -4,9 +4,9 @@ import { fetchUserFromSession } from '@/serverFunctions/auth';
 export const Route = createFileRoute('/auth')({
   component: RouteComponent,
   beforeLoad: async () => {
-    const user = await fetchUserFromSession();
+    const { email } = await fetchUserFromSession();
 
-    if (user) {
+    if (email) {
       redirect({ to: '/', throw: true });
     }
   },

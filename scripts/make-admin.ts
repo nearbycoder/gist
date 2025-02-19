@@ -6,7 +6,7 @@ async function makeAdmin(email: string) {
   try {
     const user = await prisma.user.update({
       where: { email },
-      data: { role: 'ADMIN' },
+      data: { role: 'admin' },
     });
     console.log(`Successfully updated user ${user.email} to admin role`);
   } catch (error) {
