@@ -18,6 +18,12 @@ import {
 } from '@/components/ui/tooltip';
 import { fetchUsers, updateUserRole } from '@/serverFunctions/admin';
 import { authClient } from '@/lib/auth-client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const ROLE = {
   ADMIN: 'admin',
@@ -93,33 +99,37 @@ function AdminDashboard() {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={user.id === currentUserId}
-                            onClick={() =>
-                              handleRoleToggle(
-                                user.id,
-                                user.role === ROLE.ADMIN
-                                  ? ROLE.MEMBER
-                                  : ROLE.ADMIN
-                              )
-                            }
-                          >
-                            Toggle Role
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={async () => {
-                              await impersonateUser(user.id);
-                              router.navigate({ to: '/' });
-                            }}
-                          >
-                            Impersonate
-                          </Button>
-                        </span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              Actions
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem
+                              disabled={user.id === currentUserId}
+                              onClick={() =>
+                                handleRoleToggle(
+                                  user.id,
+                                  user.role === ROLE.ADMIN
+                                    ? ROLE.MEMBER
+                                    : ROLE.ADMIN
+                                )
+                              }
+                            >
+                              Toggle Role
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              disabled={user.id === currentUserId}
+                              onClick={async () => {
+                                await impersonateUser(user.id);
+                                router.navigate({ to: '/' });
+                              }}
+                            >
+                              Impersonate
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TooltipTrigger>
                       {user.id === currentUserId && (
                         <TooltipContent>
