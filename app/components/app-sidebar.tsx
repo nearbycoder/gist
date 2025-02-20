@@ -50,7 +50,7 @@ export function AppSidebar({
   user,
 }: {
   user: Partial<Pick<User, 'id' | 'email' | 'name' | 'role'>> & {
-    impersonatedBy?: string;
+    impersonatedBy?: string | null;
   };
 }) {
   const { setOpenMobile } = useSidebar();

@@ -3,6 +3,8 @@ node_modules
 .vinxi
 
 .env
-db.sqlite
 sqlite.db*
 worker.db*
+db.sqlite*
+db.sqlite*
+worker.sqlite*
