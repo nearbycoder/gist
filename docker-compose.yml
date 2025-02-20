@@ -16,7 +16,6 @@ services:
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     volumes:
       - data:/usr/src/app/db
-    restart: unless-stopped
     ports:
       - 3000:3000
     healthcheck:
