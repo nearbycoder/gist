@@ -7,13 +7,13 @@ services:
       dockerfile: Dockerfile
     command: npm run start
     environment:
+      - SERVICE_FQDN_GIST_3000
       - NODE_ENV=${NODE_ENV:-production}
       - DATABASE_URL=${DATABASE_URL:-file:/usr/src/app/db/db.sqlite}
       - WORKER_DATABASE_URL=${WORKER_DATABASE_URL:-/usr/src/app/db/worker.sqlite}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
-      - SERVICE_FQDN_APPWRITE_3000
     volumes:
       - data:/usr/src/app/db
     restart: unless-stopped
