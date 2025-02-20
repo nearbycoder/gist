@@ -82,7 +82,6 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
                 await authClient.signOut();
