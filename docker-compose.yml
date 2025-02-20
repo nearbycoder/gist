@@ -16,13 +16,11 @@ services:
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     volumes:
       - data:/usr/src/app/db
-    ports:
-      - 3000:3000
     healthcheck:
-      test: ['CMD', 'wget -qO- http://localhost:3000/api/check || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:3000/api/check']
+      interval: 2s
+      timeout: 10s
+      retries: 15
 
   worker:
     build:
