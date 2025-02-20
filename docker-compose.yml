@@ -17,6 +17,13 @@ services:
     volumes:
       - data:/usr/src/app/db
     restart: unless-stopped
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ['CMD', 'wget -qO- http://localhost:3000/api/check || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   worker:
     build:
