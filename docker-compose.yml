@@ -6,8 +6,6 @@ services:
         VITE_BETTER_AUTH_URL: ${VITE_BETTER_AUTH_URL:-http://localhost:3000}
       dockerfile: Dockerfile
     command: npm run start
-    ports:
-      - 3000:3000
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - DATABASE_URL=${DATABASE_URL:-file:/usr/src/app/db/db.sqlite}
@@ -15,6 +13,7 @@ services:
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - SERVICE_FQDN_APPWRITE_3000
     volumes:
       - data:/usr/src/app/db
     restart: unless-stopped
