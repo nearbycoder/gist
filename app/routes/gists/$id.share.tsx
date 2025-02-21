@@ -32,6 +32,58 @@ export const Route = createFileRoute('/gists/$id/share')({
 
     return gist;
   },
+  head: ({ loaderData: gist }) => {
+    const ogImageUrl = `/api/og/${gist.id}`;
+    const userName =
+      gist.user?.name || gist.user?.email?.split('@')[0] || 'Anonymous';
+    const description = `${gist.language ? languageDisplayNames[gist.language] : 'Text'} gist by ${userName} with ${gist.versions.length} version${gist.versions.length !== 1 ? 's' : ''}`;
+
+    return {
+      title: gist.title,
+      meta: [
+        {
+          name: 'description',
+          content: description,
+        },
+        {
+          property: 'og:title',
+          content: gist.title,
+        },
+        {
+          property: 'og:description',
+          content: description,
+        },
+        {
+          property: 'og:image',
+          content: ogImageUrl,
+        },
+        {
+          property: 'og:image:width',
+          content: '1200',
+        },
+        {
+          property: 'og:image:height',
+          content: '630',
+        },
+        {
+          name: 'twitter:card',
+          content: 'summary_large_image',
+        },
+        {
+          name: 'twitter:title',
+          content: gist.title,
+        },
+        {
+          name: 'twitter:description',
+          content: description,
+        },
+        {
+          name: 'twitter:image',
+          content: ogImageUrl,
+        },
+      ],
+    };
+  },
   errorComponent: ({ error }) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-3 text-center">
