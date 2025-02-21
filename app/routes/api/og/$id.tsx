@@ -1,16 +1,37 @@
 import { ImageResponse } from '@vercel/og';
-import { createFileRoute } from '@tanstack/react-router';
-import { getPublicGist } from '@/serverFunctions/gists';
+import { createAPIFileRoute } from '@tanstack/start/api';
 import { languageDisplayNames } from '@/config/languages';
+import { prisma } from '@/lib/db';
 
-export const Route = createFileRoute('/api/og/$id')({
-  component: RouteComponent,
-  loader: async ({ params }) => {
-    const gist = await getPublicGist({
-      data: {
-        id: params.id,
+export const APIRoute = createAPIFileRoute('/api/og/$id')({
+  GET: async ({ params }) => {
+    console.log('params', params);
+    const gist = await prisma.gist.findUnique({
+      where: { id: params.id, isPublic: true },
+      include: {
+        versions: {
+          orderBy: {
+            version: 'desc',
+          },
+        },
+        forkedFrom: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     });
+
+    console.log(gist);
 
     if (!gist) {
       throw new Error('Gist not found');
@@ -38,7 +59,7 @@ export const Route = createFileRoute('/api/og/$id')({
             }}
           >
             <img
-              src={gist.user.avatarUrl}
+              src={gist.user.image}
               alt={gist.user.name}
               width={80}
               height={80}
@@ -62,14 +83,6 @@ export const Route = createFileRoute('/api/og/$id')({
                 }}
               >
                 {gist.user.name}
-              </span>
-              <span
-                style={{
-                  fontSize: 18,
-                  color: '#6b7280',
-                }}
-              >
-                @{gist.user.username}
               </span>
             </div>
           </div>
@@ -130,7 +143,3 @@ export const Route = createFileRoute('/api/og/$id')({
     });
   },
 });
-
-function RouteComponent() {
-  return null;
-}
