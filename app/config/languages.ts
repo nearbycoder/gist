@@ -10,6 +10,7 @@ export const validLanguages = [
   'ruby',
   'swift',
   'sql',
+  'elixir',
 ] as const;
 
 export type ValidLanguage = (typeof validLanguages)[number];
@@ -26,4 +27,5 @@ export const languageDisplayNames: Record<ValidLanguage, string> = {
   ruby: 'Ruby',
   swift: 'Swift',
   sql: 'SQL',
+  elixir: 'Elixir',
 };
