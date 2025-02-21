@@ -225,7 +225,7 @@ function SettingsPage() {
                 )}
               />
               <Button type="submit" size="sm">
-                Update Password
+                Change Password
               </Button>
             </form>
           </Form>
