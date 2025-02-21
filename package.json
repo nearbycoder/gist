@@ -57,6 +57,7 @@
     "@tanstack/start": "1.109.1",
     "@tanstack/zod-adapter": "1.109.0",
     "@types/diff": "^7.0.1",
+    "@vercel/og": "^0.6.5",
     "better-auth": "^1.1.19",
     "better-sqlite3": "^11.8.1",
     "class-variance-authority": "^0.7.1",

@@ -179,6 +179,14 @@ export const getPublicGist = createServerFn({
             title: true,
           },
         },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     });
 
