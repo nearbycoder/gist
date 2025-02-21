@@ -1,8 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { diffLines } from 'diff';
-import { cn } from '@/lib/utils';
+import { Suspense, lazy } from 'react';
+import { useThemeStore } from './ThemeToggle';
+import githubdark from './editor-themes/githubdark';
+import githublight from './editor-themes/githublight';
+import type { Monaco } from '@monaco-editor/react';
+import type { editor } from 'monaco-editor';
+
+const MonacoEditor = lazy(() =>
+  import('@monaco-editor/react').then((mod) => ({ default: mod.DiffEditor }))
+);
 
 interface DiffViewerProps {
   oldVersion: string;
@@ -13,31 +20,44 @@ interface DiffViewerProps {
 export function DiffViewer({
   oldVersion,
   newVersion,
-  language,
+  language = 'typescript',
 }: DiffViewerProps) {
-  const [diff, setDiff] = useState<
-    Array<{ value: string; added?: boolean; removed?: boolean }>
-  >([]);
+  const { mode } = useThemeStore();
 
-  useEffect(() => {
-    const differences = diffLines(oldVersion, newVersion);
-    setDiff(differences);
-  }, [oldVersion, newVersion]);
+  const handleEditorDidMount = (monaco: Monaco) => {
+    monaco.editor.defineTheme(
+      'GitHubDark',
+      githubdark as editor.IStandaloneThemeData
+    );
+    monaco.editor.defineTheme(
+      'GitHubLight',
+      githublight as editor.IStandaloneThemeData
+    );
+  };
 
   return (
-    <pre className="p-4 font-mono text-sm overflow-auto">
-      {diff.map((part, index) => (
-        <div
-          key={index}
-          className={cn(
-            'whitespace-pre',
-            part.added && 'bg-green-950/30 text-green-400',
-            part.removed && 'bg-red-950/30 text-red-400'
-          )}
-        >
-          {part.value}
-        </div>
-      ))}
-    </pre>
+    <div className="h-full">
+      <Suspense fallback={<div></div>}>
+        <MonacoEditor
+          beforeMount={handleEditorDidMount}
+          original={oldVersion}
+          modified={newVersion}
+          theme={
+            mode === 'dark' || mode === 'auto' ? 'GitHubDark' : 'GitHubLight'
+          }
+          language={language}
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            renderSideBySide: false,
+            diffWordWrap: 'on',
+            readOnly: true,
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+          }}
+        />
+      </Suspense>
+    </div>
   );
 }
