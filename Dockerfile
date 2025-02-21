@@ -2,6 +2,9 @@
 FROM node:22.14.0-bullseye-slim AS base
 WORKDIR /usr/src/app
 
+# Install curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Accept build arg for VITE_BETTER_AUTH_URL
 ARG VITE_BETTER_AUTH_URL
 
