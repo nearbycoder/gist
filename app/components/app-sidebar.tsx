@@ -61,7 +61,7 @@ export function AppSidebar({
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center justify-between">
-            Application <ThemeToggle />
+            Gist <ThemeToggle />
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
