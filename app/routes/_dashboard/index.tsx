@@ -1,13 +1,11 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
-import { Heart, Search, Share, Trash } from 'lucide-react';
+import { GitFork, Heart, Search, Share, Trash } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { deleteGist, getGists, toggleFavorite } from '@/serverFunctions/gists';
 import { GistSearch } from '@/components/gist-search';
 import { useDebounce } from '@/hooks/use-debounce';
-import { cn } from '@/lib/utils';
-import { languageDisplayNames } from '@/config/languages';
 
 const searchSchema = z.object({
   search: z.string().optional(),
@@ -131,36 +129,44 @@ function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {gists.map((gist) => (
               <Link
-                to={`/gists/$id`}
-                params={{
-                  id: gist.id,
-                }}
                 key={gist.id}
-                className="block group"
+                to="/gists/$id"
+                params={{ id: gist.id }}
+                className="group border rounded-lg p-4 hover:border-gray-600 transition-colors"
               >
-                <div className="border rounded-lg p-4 transition-colors hover:bg-muted/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium truncate pr-8">
-                      {gist.title || 'Untitled Gist'}
-                    </h3>
-                    <div className="flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex flex-col truncate">
+                      <h2 className="text-lg font-semibold truncate">
+                        {gist.title}
+                      </h2>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{gist.language || 'No language'}</span>
+                        <span>•</span>
+                        <span>
+                          {gist.versions.length} version
+                          {gist.versions.length !== 1 ? 's' : ''}
+                        </span>
+                        {gist.forksCount > 0 && (
+                          <>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                              <GitFork className="w-3 h-3" />
+                              {gist.forksCount}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <button
+                        aria-label="Toggle favorite"
+                        className="text-muted-foreground hover:text-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleFavoriteToggle(gist.id);
                         }}
-                        aria-label={
-                          gist.isFavorite
-                            ? 'Remove from favorites'
-                            : 'Add to favorites'
-                        }
-                        className={cn(
-                          'text-muted-foreground hover:text-foreground transition-colors',
-                          gist.isFavorite
-                            ? 'text-red-500 hover:text-red-600'
-                            : 'sm:opacity-0 sm:group-hover:opacity-100'
-                        )}
                       >
                         <Heart
                           className="w-4 h-4"
@@ -205,18 +211,6 @@ function Home() {
                         <Trash className="w-4 h-4" />
                       </button>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="bg-muted px-2 py-1 rounded text-foreground">
-                      {gist.language
-                        ? languageDisplayNames[gist.language]
-                        : 'No language'}
-                    </span>
-                    <span>•</span>
-                    <span>
-                      {gist.versions.length} version
-                      {gist.versions.length !== 1 ? 's' : ''}
-                    </span>
                   </div>
                 </div>
               </Link>

@@ -102,24 +102,26 @@ function RouteComponent() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{gist.title}</h1>
-          <div className="flex items-center space-x-2 mt-1">
+    <div className="p-4 sm:p-3 space-y-6 flex h-full flex-col">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col truncate">
+          <h1 className="text-xl sm:text-2xl font-bold truncate max-w-full">
+            {gist.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 mt-1 max-w-full">
             <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm">
               {gist.language
                 ? languageDisplayNames[gist.language]
                 : 'No language'}
             </span>
-            <span className="text-gray-300">•</span>
+            <span className="text-gray-300 hidden sm:inline">•</span>
             <span className="text-gray-300">
               {gist.versions.length} version
               {gist.versions.length !== 1 ? 's' : ''}
             </span>
             {gist.forkedFrom && (
               <>
-                <span className="text-gray-300">•</span>
+                <span className="text-gray-300 hidden sm:inline">•</span>
                 <span className="text-gray-300">
                   Forked from{' '}
                   <Link
@@ -134,7 +136,7 @@ function RouteComponent() {
             )}
             {gist.forksCount > 0 && (
               <>
-                <span className="text-gray-300">•</span>
+                <span className="text-gray-300 hidden sm:inline">•</span>
                 <span className="text-gray-300">
                   {gist.forksCount} fork{gist.forksCount !== 1 ? 's' : ''}
                 </span>
@@ -278,7 +280,7 @@ function RouteComponent() {
           </div>
         )}
       </div>
-      <div className="border rounded-lg h-[calc(100%-200px)] sm:h-[calc(100%-160px)]">
+      <div className="border rounded-lg flex-1">
         <Suspense fallback={<div></div>}>
           {compareMode && compareVersion ? (
             <DiffViewer
