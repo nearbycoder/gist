@@ -18,6 +18,8 @@ services:
     volumes:
       - data:/usr/src/app/db
     restart: unless-stopped
+    ports:
+      - '3000:3000'
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://app:3000/api/check']
       interval: 30s
