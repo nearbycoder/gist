@@ -37,7 +37,7 @@ export const Route = createFileRoute('/_dashboard/')({
 });
 
 function Home() {
-  const gists = Route.useLoaderData();
+  const { gists, total } = Route.useLoaderData();
   const router = useRouter();
   const search = Route.useSearch();
 
@@ -78,29 +78,40 @@ function Home() {
     <div className="space-y-6">
       <div className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 flex-wrap">
-          <GistSearch
-            search={searchTerm}
-            language={search.language || null}
-            isPublic={search.isPublic === 'true' ? true : null}
-            favoritesOnly={search.favoritesOnly === 'true' ? true : null}
-            onSearchChange={setSearchTerm}
-            onLanguageChange={(language) =>
-              updateSearch({ language: language || undefined })
-            }
-            onIsPublicChange={(isPublic) =>
-              updateSearch({ isPublic: isPublic ? 'true' : undefined })
-            }
-            onFavoritesOnlyChange={(favoritesOnly) =>
-              updateSearch({
-                favoritesOnly: favoritesOnly ? 'true' : undefined,
-              })
-            }
-          />
+          <div className="flex-1">
+            <GistSearch
+              search={searchTerm}
+              language={search.language || null}
+              isPublic={search.isPublic === 'true' ? true : null}
+              favoritesOnly={search.favoritesOnly === 'true' ? true : null}
+              onSearchChange={setSearchTerm}
+              onLanguageChange={(language) =>
+                updateSearch({ language: language || undefined })
+              }
+              onIsPublicChange={(isPublic) =>
+                updateSearch({ isPublic: isPublic ? 'true' : undefined })
+              }
+              onFavoritesOnlyChange={(favoritesOnly) =>
+                updateSearch({
+                  favoritesOnly: favoritesOnly ? 'true' : undefined,
+                })
+              }
+            />
+          </div>
           <Button asChild className="w-full sm:w-auto" size="sm">
             <Link to="/gists/new">+ New Gist</Link>
           </Button>
         </div>
       </div>
+      {total > 0 && (
+        <div className="flex items-center gap-2 px-4">
+          <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+          <p className="text-sm text-muted-foreground">
+            Showing {gists.length} of {total} result
+            {gists.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+      )}
       <div className="p-4">
         {gists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">

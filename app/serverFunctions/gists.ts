@@ -72,30 +72,36 @@ export const getGists = createServerFn({
         : {}),
     };
 
-    const gists = await prisma.gist.findMany({
-      where,
-      take: data.take,
-      include: {
-        versions: true,
-        favoritedBy: {
-          where: {
-            id: user.id,
-          },
-          select: {
-            id: true,
+    const [gists, total] = await Promise.all([
+      prisma.gist.findMany({
+        where,
+        take: data.take,
+        include: {
+          versions: true,
+          favoritedBy: {
+            where: {
+              id: user.id,
+            },
+            select: {
+              id: true,
+            },
           },
         },
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      }),
+      prisma.gist.count({ where: { userId: user.id } }),
+    ]);
 
-    return gists.map((gist) => ({
-      ...gist,
-      isFavorite: gist.favoritedBy.length > 0,
-      favoritedBy: undefined,
-    }));
+    return {
+      gists: gists.map((gist) => ({
+        ...gist,
+        isFavorite: gist.favoritedBy.length > 0,
+        favoritedBy: undefined,
+      })),
+      total,
+    };
   });
 
 // GET /api/gists/:id
