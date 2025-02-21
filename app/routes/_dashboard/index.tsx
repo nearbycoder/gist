@@ -140,7 +140,7 @@ function Home() {
                       <h2 className="text-lg font-semibold truncate">
                         {gist.title}
                       </h2>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-muted-foreground">
                         <span>{gist.language || 'No language'}</span>
                         <span>•</span>
                         <span>
