@@ -106,7 +106,7 @@ function RouteComponent() {
                 : 'No language'}
             </span>
             <span className="text-gray-300">•</span>
-            <span className="text-gray-300">
+            <span className="text-gray-600 dark:text-gray-300">
               {gist.versions.length} version
               {gist.versions.length !== 1 ? 's' : ''}
             </span>

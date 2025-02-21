@@ -115,14 +115,14 @@ function RouteComponent() {
                 : 'No language'}
             </span>
             <span className="text-gray-300 hidden sm:inline">•</span>
-            <span className="text-gray-300">
+            <span className="text-gray-600 dark:text-gray-300">
               {gist.versions.length} version
               {gist.versions.length !== 1 ? 's' : ''}
             </span>
             {gist.forkedFrom && (
               <>
                 <span className="text-gray-300 hidden sm:inline">•</span>
-                <span className="text-gray-300">
+                <span className="text-gray-600 dark:text-gray-300">
                   Forked from{' '}
                   <Link
                     to="/gists/$id/share"
@@ -137,7 +137,7 @@ function RouteComponent() {
             {gist.forksCount > 0 && (
               <>
                 <span className="text-gray-300 hidden sm:inline">•</span>
-                <span className="text-gray-300">
+                <span className="text-gray-600 dark:text-gray-300">
                   {gist.forksCount} fork{gist.forksCount !== 1 ? 's' : ''}
                 </span>
               </>
