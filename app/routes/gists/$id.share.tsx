@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
+import { GitCompare } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { DiffViewer } from '@/components/DiffViewer.client';
 import { Label } from '@/components/ui/label';
@@ -11,9 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 import { getPublicGist } from '@/serverFunctions/gists';
 import { languageDisplayNames } from '@/config/languages';
+import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/gists/$id/share')({
   component: RouteComponent,
@@ -54,12 +56,15 @@ export const Route = createFileRoute('/gists/$id/share')({
 function RouteComponent() {
   const gist = Route.useLoaderData();
   const [version, setVersion] = useState(gist.versions[0]);
-  const [compareVersion, setCompareVersion] = useState(gist.versions[1]);
-  const [isDiffView, setIsDiffView] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareVersion, setCompareVersion] = useState<typeof version | null>(
+    null
+  );
 
   useEffect(() => {
     setVersion(gist.versions[0]);
-    setCompareVersion(gist.versions[1]);
+    setCompareVersion(null);
+    setCompareMode(false);
   }, [gist]);
 
   return (
@@ -80,12 +85,23 @@ function RouteComponent() {
             </span>
           </div>
         </div>
+        {gist.versions.length > 1 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCompareMode(!compareMode)}
+            className={cn(
+              'transition-colors',
+              compareMode && 'text-blue-500 hover:text-blue-600'
+            )}
+          >
+            <GitCompare className="w-4 h-4" />
+          </Button>
+        )}
       </div>
-      <div className="flex items-center gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="version">
-            {isDiffView ? 'New Version' : 'Version'}
-          </Label>
+      <div className={cn('space-y-2', compareMode && 'flex gap-4')}>
+        <div className={compareMode ? 'flex-1' : undefined}>
+          <Label htmlFor="version">Version</Label>
           <Select
             value={version.id}
             onValueChange={(val) => {
@@ -95,7 +111,7 @@ function RouteComponent() {
               }
             }}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Version" />
             </SelectTrigger>
             <SelectContent>
@@ -107,47 +123,37 @@ function RouteComponent() {
             </SelectContent>
           </Select>
         </div>
-        {gist.versions.length > 1 && (
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="diff-mode"
-                checked={isDiffView}
-                onCheckedChange={setIsDiffView}
-              />
-              <Label htmlFor="diff-mode">Compare versions</Label>
-            </div>
-            {isDiffView && (
-              <div className="space-y-2">
-                <Label htmlFor="compareVersion">Old Version</Label>
-                <Select
-                  value={compareVersion.id}
-                  onValueChange={(val) => {
-                    const ver = gist.versions.find((v) => v.id === val);
-                    if (ver) {
-                      setCompareVersion(ver);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Compare Version" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {gist.versions.map((ver) => (
-                      <SelectItem key={ver.id} value={ver.id}>
-                        Version {ver.version}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+        {compareMode && (
+          <div className="flex-1">
+            <Label htmlFor="compareVersion">Compare with</Label>
+            <Select
+              value={compareVersion?.id || ''}
+              onValueChange={(val) => {
+                const ver = gist.versions.find((v) => v.id === val);
+                if (ver) {
+                  setCompareVersion(ver);
+                }
+              }}
+            >
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Select version" />
+              </SelectTrigger>
+              <SelectContent>
+                {gist.versions
+                  .filter((v) => v.id !== version.id)
+                  .map((ver) => (
+                    <SelectItem key={ver.id} value={ver.id}>
+                      Version {ver.version}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
       </div>
       <div className="border rounded-lg h-[calc(100vh-250px)]">
         <Suspense fallback={<div></div>}>
-          {isDiffView ? (
+          {compareMode && compareVersion ? (
             <DiffViewer
               oldVersion={compareVersion.body}
               newVersion={version.body}
