@@ -39,6 +39,20 @@ export const Route = createFileRoute('/_dashboard/gists/$id/')({
 
     return gist;
   },
+  head(ctx) {
+    console.log(ctx.loaderData);
+    return {
+      meta: [
+        {
+          title: `${ctx.loaderData.title} - ${ctx.loaderData.language}`,
+        },
+        {
+          property: 'og:title',
+          content: ctx.loaderData.title,
+        },
+      ],
+    };
+  },
   errorComponent: ({ error }) => {
     return <div>Error: {error.message}</div>;
   },

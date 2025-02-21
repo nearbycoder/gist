@@ -105,14 +105,13 @@ function Home() {
       </div>
       {total > 0 && (
         <div className="flex items-center gap-2 px-4">
-          <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">
             Showing {gists.length} of {total} result
             {gists.length !== 1 ? 's' : ''}
           </p>
         </div>
       )}
-      <div className="p-4">
+      <div className="px-4">
         {gists.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="rounded-full bg-muted p-3 mb-4">
