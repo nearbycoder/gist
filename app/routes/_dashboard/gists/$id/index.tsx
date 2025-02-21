@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { GitCompare, Heart, Pencil, Share, Trash } from 'lucide-react';
+import { GitCompare, GitFork, Heart, Pencil, Share, Trash } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { DiffViewer } from '@/components/DiffViewer.client';
 import { Label } from '@/components/ui/label';
@@ -18,7 +18,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { deleteGist, getGist, toggleFavorite } from '@/serverFunctions/gists';
+import {
+  deleteGist,
+  forkGist,
+  getGist,
+  toggleFavorite,
+} from '@/serverFunctions/gists';
 import { cn } from '@/lib/utils';
 import { languageDisplayNames } from '@/config/languages';
 
@@ -79,6 +84,23 @@ function RouteComponent() {
     router.invalidate();
   };
 
+  const handleFork = async () => {
+    try {
+      const forkedGist = await forkGist({
+        data: {
+          gistId: gist.id,
+        },
+      });
+
+      router.navigate({
+        to: `/gists/${forkedGist.id}`,
+      });
+    } catch (error) {
+      console.error('Failed to fork gist:', error);
+      alert('Failed to fork gist. Please try again.');
+    }
+  };
+
   return (
     <div className="p-4 sm:p-3 space-y-6 flex h-full flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -97,6 +119,29 @@ function RouteComponent() {
               {gist.versions.length} version
               {gist.versions.length !== 1 ? 's' : ''}
             </span>
+            {gist.forkedFrom && (
+              <>
+                <span className="text-gray-300 hidden sm:inline">•</span>
+                <span className="text-gray-300">
+                  Forked from{' '}
+                  <Link
+                    to="/gists/$id/share"
+                    params={{ id: gist.forkedFrom.id }}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    {gist.forkedFrom.title}
+                  </Link>
+                </span>
+              </>
+            )}
+            {gist.forksCount > 0 && (
+              <>
+                <span className="text-gray-300 hidden sm:inline">•</span>
+                <span className="text-gray-300">
+                  {gist.forksCount} fork{gist.forksCount !== 1 ? 's' : ''}
+                </span>
+              </>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
@@ -126,12 +171,23 @@ function RouteComponent() {
             />
           </Button>
           {gist.isPublic && (
-            <Link to={`/gists/$id/share`} params={{ id: gist.id }}>
-              <Button size="sm" className="gap-2">
-                <Share className="w-4 h-4" />
-                <span className="hidden sm:inline">Share</span>
+            <>
+              <Link to={`/gists/$id/share`} params={{ id: gist.id }}>
+                <Button size="sm" className="gap-2">
+                  <Share className="w-4 h-4" />
+                  <span className="hidden sm:inline">Share</span>
+                </Button>
+              </Link>
+              <Button
+                onClick={handleFork}
+                size="sm"
+                variant="outline"
+                className="gap-2"
+              >
+                <GitFork className="w-4 h-4" />
+                <span className="hidden sm:inline">Fork</span>
               </Button>
-            </Link>
+            </>
           )}
           <Button
             onClick={async (e) => {
@@ -224,7 +280,7 @@ function RouteComponent() {
           </div>
         )}
       </div>
-      <div className="border rounded-lg h-[calc(100%-200px)] sm:h-[calc(100%-160px)]">
+      <div className="border rounded-lg flex-1">
         <Suspense fallback={<div></div>}>
           {compareMode && compareVersion ? (
             <DiffViewer

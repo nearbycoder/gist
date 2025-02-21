@@ -1,7 +1,7 @@
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { GitCompare } from 'lucide-react';
+import { GitCompare, GitFork } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { DiffViewer } from '@/components/DiffViewer.client';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { getPublicGist } from '@/serverFunctions/gists';
+import { forkGist, getPublicGist } from '@/serverFunctions/gists';
 import { languageDisplayNames } from '@/config/languages';
 import { cn } from '@/lib/utils';
 
@@ -55,6 +55,7 @@ export const Route = createFileRoute('/gists/$id/share')({
 
 function RouteComponent() {
   const gist = Route.useLoaderData();
+  const router = useRouter();
   const [version, setVersion] = useState(gist.versions[0]);
   const [compareMode, setCompareMode] = useState(false);
   const [compareVersion, setCompareVersion] = useState<typeof version | null>(
@@ -66,6 +67,32 @@ function RouteComponent() {
     setCompareVersion(null);
     setCompareMode(false);
   }, [gist]);
+
+  const handleFork = async () => {
+    try {
+      const forkedGist = await forkGist({
+        data: {
+          gistId: gist.id,
+        },
+      });
+
+      router.navigate({
+        to: `/gists/${forkedGist.id}`,
+      });
+    } catch (error) {
+      if (error.message === 'Unauthorized') {
+        router.navigate({
+          to: '/auth/login',
+          search: {
+            redirect: window.location.pathname,
+          },
+        });
+        return;
+      }
+      console.error('Failed to fork gist:', error);
+      alert('Failed to fork gist. Please try again.');
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -85,19 +112,30 @@ function RouteComponent() {
             </span>
           </div>
         </div>
-        {gist.versions.length > 1 && (
+        <div className="flex items-center gap-2">
+          {gist.versions.length > 1 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCompareMode(!compareMode)}
+              className={cn(
+                'transition-colors',
+                compareMode && 'text-blue-500 hover:text-blue-600'
+              )}
+            >
+              <GitCompare className="w-4 h-4" />
+            </Button>
+          )}
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCompareMode(!compareMode)}
-            className={cn(
-              'transition-colors',
-              compareMode && 'text-blue-500 hover:text-blue-600'
-            )}
+            onClick={handleFork}
+            size="sm"
+            variant="outline"
+            className="gap-2"
           >
-            <GitCompare className="w-4 h-4" />
+            <GitFork className="w-4 h-4" />
+            <span className="hidden sm:inline">Fork</span>
           </Button>
-        )}
+        </div>
       </div>
       <div className={cn('space-y-2', compareMode && 'flex gap-4')}>
         <div className={compareMode ? 'flex-1' : undefined}>

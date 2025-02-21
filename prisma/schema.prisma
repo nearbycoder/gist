@@ -19,6 +19,12 @@ model Gist {
   user        User      @relation("UserGists", fields: [userId], references: [id])
   versions    Version[]
   favoritedBy User[]    @relation("UserFavorites")
+
+  // Fork relations
+  forkedFromId String?
+  forkedFrom   Gist?   @relation("GistForks", fields: [forkedFromId], references: [id])
+  forks        Gist[]  @relation("GistForks")
+  forksCount   Int     @default(0)
 }
 
 model Version {

@@ -135,6 +135,12 @@ export const getGist = createServerFn({
             id: true,
           },
         },
+        forkedFrom: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
       },
     });
 
@@ -165,6 +171,12 @@ export const getPublicGist = createServerFn({
         versions: {
           orderBy: {
             version: 'desc',
+          },
+        },
+        forkedFrom: {
+          select: {
+            id: true,
+            title: true,
           },
         },
       },
@@ -322,4 +334,67 @@ export const toggleFavorite = createServerFn({ method: 'POST' })
       });
       return true;
     }
+  });
+
+// POST /api/gists/:id/fork
+export const forkGist = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
+  .validator(
+    zodValidator(
+      z.object({
+        gistId: z.string(),
+      })
+    )
+  )
+  .handler(async ({ data, context }) => {
+    const user = context.user;
+
+    // Get the original gist with its latest version
+    const originalGist = await prisma.gist.findUnique({
+      where: { id: data.gistId, isPublic: true },
+      include: {
+        versions: {
+          orderBy: {
+            version: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    if (!originalGist) {
+      throw new Error('Gist not found or is not public');
+    }
+
+    // Create a new gist as a fork
+    const forkedGist = await prisma.gist.create({
+      data: {
+        title: originalGist.title,
+        language: originalGist.language,
+        isPublic: originalGist.isPublic,
+        userId: user.id,
+        forkedFromId: originalGist.id,
+      },
+    });
+
+    // Create the first version of the forked gist
+    await prisma.version.create({
+      data: {
+        version: 1,
+        body: originalGist.versions[0].body,
+        gistId: forkedGist.id,
+      },
+    });
+
+    // Increment the fork count on the original gist
+    await prisma.gist.update({
+      where: { id: originalGist.id },
+      data: {
+        forksCount: {
+          increment: 1,
+        },
+      },
+    });
+
+    return forkedGist;
   });
