@@ -47,14 +47,12 @@ export function DiffViewer({
           }
           language={language}
           options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            renderSideBySide: false,
-            diffWordWrap: 'on',
-            readOnly: true,
-            lineNumbers: 'on',
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
+            minimap: {
+              enabled: false,
+            },
+            fontSize: 18,
+            formatOnPaste: true,
+            formatOnType: true,
           }}
         />
       </Suspense>
