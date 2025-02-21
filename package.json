@@ -7,7 +7,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "dev": "vinxi dev",
+    "dev": "concurrently \"vinxi dev\" \"npm run worker\"",
     "build": "vinxi build",
     "start": "concurrently \"vinxi start\" \"npm run worker\"",
     "lint": "eslint .",
