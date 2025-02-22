@@ -47,7 +47,8 @@ export const APIRoute = createAPIFileRoute('/api/og/$id')({
             flexDirection: 'column',
             alignItems: 'flex-start',
             justifyContent: 'center',
-            backgroundColor: '#1a1b1e',
+            backgroundColor: '#27272a',
+            backgroundImage: 'linear-gradient(to bottom, #27272a, #09090b)',
             padding: 80,
           }}
         >
