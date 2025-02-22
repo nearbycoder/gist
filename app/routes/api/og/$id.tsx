@@ -5,7 +5,6 @@ import { prisma } from '@/lib/db';
 
 export const APIRoute = createAPIFileRoute('/api/og/$id')({
   GET: async ({ params }) => {
-    console.log('params', params);
     const gist = await prisma.gist.findUnique({
       where: { id: params.id, isPublic: true },
       include: {
@@ -30,8 +29,6 @@ export const APIRoute = createAPIFileRoute('/api/og/$id')({
         },
       },
     });
-
-    console.log(gist);
 
     if (!gist) {
       throw new Error('Gist not found');

@@ -46,7 +46,6 @@ export const Route = createFileRoute('/_dashboard/gists/$id/')({
     return gist;
   },
   head(ctx) {
-    console.log(ctx.loaderData);
     return {
       meta: [
         {
