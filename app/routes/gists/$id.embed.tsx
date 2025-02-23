@@ -115,10 +115,8 @@ function RouteComponent() {
       <Editor
         value={selectedVersion.body}
         language={gist.language || 'plaintext'}
-        readOnly
         minimal
         theme={theme}
-        onChange={() => {}}
       />
     </div>
   );

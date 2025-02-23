@@ -14,14 +14,12 @@ export function Editor({
   language,
   value,
   onChange,
-  readOnly = false,
   minimal = false,
   theme = 'auto',
 }: {
   language: string;
   value: string;
   onChange?: (v: string | undefined) => void;
-  readOnly?: boolean;
   minimal?: boolean;
   theme?: 'auto' | 'dark' | 'light';
 }) {
@@ -72,9 +70,9 @@ export function Editor({
             enabled: !minimal,
           },
           fontSize: 18,
-          formatOnPaste: !readOnly,
-          formatOnType: !readOnly,
-          readOnly,
+          formatOnPaste: !onChange,
+          formatOnType: !onChange,
+          readOnly: !onChange,
           lineNumbers: !minimal ? 'on' : 'off',
           folding: !minimal,
           scrollBeyondLastLine: !minimal,

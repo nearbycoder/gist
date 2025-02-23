@@ -287,7 +287,6 @@ function RouteComponent() {
           ) : (
             <Editor
               value={version.body}
-              onChange={() => {}}
               language={gist.language || 'typescript'}
             />
           )}
