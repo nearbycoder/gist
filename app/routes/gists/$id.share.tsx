@@ -154,7 +154,7 @@ function RouteComponent() {
   };
 
   const handleCopyEmbed = () => {
-    const embedUrl = `${window.location.origin}/gists/${gist.id}/embed`;
+    const embedUrl = `${window.location.origin}/gists/${gist.id}/embed?version=${version.version}&theme=${window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'}`;
     const embedCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: 0;"></iframe>`;
     navigator.clipboard.writeText(embedCode);
     setCopied(true);
