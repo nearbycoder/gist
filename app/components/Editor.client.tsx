@@ -14,17 +14,32 @@ export function Editor({
   language,
   value,
   onChange,
+  readOnly = false,
+  minimal = false,
+  theme = 'auto',
 }: {
   language: string;
   value: string;
-  onChange: (v: string | undefined) => void;
+  onChange?: (v: string | undefined) => void;
+  readOnly?: boolean;
+  minimal?: boolean;
+  theme?: 'auto' | 'dark' | 'light';
 }) {
   const { mode } = useThemeStore();
 
   const handleEditorDidMount = (monaco: Monaco) => {
-    monaco.editor.defineTheme('GitHubDark', githubdark);
-    monaco.editor.defineTheme('GitHubLight', githublight);
+    monaco.editor.defineTheme('GitHubDark', githubdark as any);
+    monaco.editor.defineTheme('GitHubLight', githublight as any);
   };
+
+  const editorTheme =
+    theme === 'auto'
+      ? mode === 'dark'
+        ? 'GitHubDark'
+        : 'GitHubLight'
+      : theme === 'dark'
+        ? 'GitHubDark'
+        : 'GitHubLight';
 
   return (
     <Suspense fallback={<div></div>}>
@@ -46,21 +61,24 @@ export function Editor({
           });
         }}
         value={value}
-        theme={
-          mode === 'dark' || mode === 'auto' ? 'GitHubDark' : 'GitHubLight'
-        }
+        theme={editorTheme}
         onChange={(code) => {
-          onChange(code);
+          onChange?.(code);
         }}
         height="100%"
         language={language}
         options={{
           minimap: {
-            enabled: false,
+            enabled: !minimal,
           },
           fontSize: 18,
-          formatOnPaste: true,
-          formatOnType: true,
+          formatOnPaste: !readOnly,
+          formatOnType: !readOnly,
+          readOnly,
+          lineNumbers: !minimal ? 'on' : 'off',
+          folding: !minimal,
+          scrollBeyondLastLine: !minimal,
+          renderLineHighlight: minimal ? 'none' : 'all',
         }}
       />
     </Suspense>

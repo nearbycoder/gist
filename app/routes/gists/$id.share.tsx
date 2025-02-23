@@ -1,7 +1,7 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router';
 import { Suspense, useEffect, useState } from 'react';
 
-import { GitCompare, GitFork } from 'lucide-react';
+import { Code2, GitCompare, GitFork } from 'lucide-react';
 import { Editor } from '@/components/Editor.client';
 import { DiffViewer } from '@/components/DiffViewer.client';
 import { Label } from '@/components/ui/label';
@@ -13,6 +13,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { forkGist, getPublicGist } from '@/serverFunctions/gists';
 import { languageDisplayNames } from '@/config/languages';
 import { cn } from '@/lib/utils';
@@ -35,7 +41,7 @@ export const Route = createFileRoute('/gists/$id/share')({
   head: ({ loaderData: gist }) => {
     const ogImageUrl = `/api/og/${gist.id}`;
     const userName =
-      gist.user?.name || gist.user?.email?.split('@')[0] || 'Anonymous';
+      gist.user.name || gist.user.email.split('@')[0] || 'Anonymous';
     const description = `${gist.language ? languageDisplayNames[gist.language] : 'Text'} gist by ${userName} with ${gist.versions.length} version${gist.versions.length !== 1 ? 's' : ''}`;
 
     return {
@@ -113,6 +119,7 @@ function RouteComponent() {
   const [compareVersion, setCompareVersion] = useState<typeof version | null>(
     null
   );
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setVersion(gist.versions[0]);
@@ -144,6 +151,14 @@ function RouteComponent() {
       console.error('Failed to fork gist:', error);
       alert('Failed to fork gist. Please try again.');
     }
+  };
+
+  const handleCopyEmbed = () => {
+    const embedUrl = `${window.location.origin}/gists/${gist.id}/embed`;
+    const embedCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: 0;"></iframe>`;
+    navigator.clipboard.writeText(embedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -178,6 +193,26 @@ function RouteComponent() {
               <GitCompare className="w-4 h-4" />
             </Button>
           )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleCopyEmbed}
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Code2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">
+                    {copied ? 'Copied!' : 'Embed'}
+                  </span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy embed code</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <Button
             onClick={handleFork}
             size="sm"
