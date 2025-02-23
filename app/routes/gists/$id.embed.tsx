@@ -6,6 +6,7 @@ import { languageDisplayNames } from '@/config/languages';
 
 const themeSchema = z.object({
   theme: z.enum(['dark', 'light', 'auto']).catch('auto'),
+  version: z.number().catch(1),
 });
 export const Route = createFileRoute('/gists/$id/embed')({
   component: RouteComponent,
@@ -96,7 +97,7 @@ export const Route = createFileRoute('/gists/$id/embed')({
 
 function RouteComponent() {
   const gist = Route.useLoaderData();
-  const { theme } = Route.useSearch();
+  const { theme, version } = Route.useSearch();
 
   if (!gist.versions.length) {
     return (
@@ -106,10 +107,13 @@ function RouteComponent() {
     );
   }
 
+  const selectedVersion =
+    gist.versions.find((v) => v.version === version) || gist.versions[0];
+
   return (
     <div className="w-full h-screen">
       <Editor
-        value={gist.versions[0].body}
+        value={selectedVersion.body}
         language={gist.language || 'plaintext'}
         readOnly
         minimal
