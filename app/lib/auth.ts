@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { PrismaClient } from '@prisma/client';
-import { getWebRequest } from '@tanstack/start/server';
+import { getWebRequest } from '@tanstack/react-start/server';
 import { admin } from 'better-auth/plugins';
 
 const prisma = new PrismaClient();

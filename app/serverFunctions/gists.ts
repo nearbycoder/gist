@@ -1,4 +1,4 @@
-import { createMiddleware, createServerFn } from '@tanstack/start';
+import { createMiddleware, createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { prisma } from '@/lib/db';
