@@ -1,4 +1,4 @@
-import { Files, GitBranch, LogOut, Settings, Users } from 'lucide-react';
+import { Files, GitBranch, LogOut, Users } from 'lucide-react';
 
 import { Link, useRouter } from '@tanstack/react-router';
 import { NavUser } from './ui/nav-user';
@@ -24,11 +24,6 @@ const items = [
     title: 'Gists',
     url: '/',
     icon: GitBranch,
-  },
-  {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
   },
 ];
 
