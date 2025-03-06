@@ -1,5 +1,6 @@
 import { defineConfig } from '@tanstack/react-start-config';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   server: {
@@ -10,6 +11,7 @@ export default defineConfig({
       viteTsConfigPaths({
         projects: ['./tsconfig.json'],
       }) as any,
+      tailwindcss(),
     ],
   },
 });
