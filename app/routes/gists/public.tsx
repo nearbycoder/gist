@@ -1,6 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
-import type { Gist, User, Version } from '@prisma/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Card,
@@ -74,8 +73,4 @@ function PublicGistsPage() {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> refs/remotes/origin/main
