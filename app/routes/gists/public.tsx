@@ -1,50 +1,25 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 import type { Gist, User, Version } from '@prisma/client';
-import { prisma } from '@/lib/db';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { getPublicGists } from '@/serverFunctions/gists';
 
 type GistWithUserAndVersions = Gist & {
-  user: User;
-  versions: Array<Version>;
+  user: Pick<User, 'id' | 'name' | 'email' | 'image'>;
+  versions: Version[];
 };
 
 export const Route = createFileRoute('/gists/public')({
   component: PublicGistsPage,
   loader: async () => {
-    const publicGists = await prisma.gist.findMany({
-      where: {
-        isPublic: true,
-      },
-      include: {
-        user: true,
-        versions: {
-          orderBy: {
-            version: 'desc',
-          },
-          take: 1,
-        },
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
-
-    return {
-      publicGists,
-    };
+    const { publicGists } = await getPublicGists({ data: { take: 50 } });
+    return { publicGists };
   },
 });
 
 function PublicGistsPage() {
-  const { publicGists } = Route.useLoaderData();
+  const { publicGists } = Route.useLoaderData() as { publicGists: GistWithUserAndVersions[] };
 
   return (
     <div className="container mx-auto py-8">
