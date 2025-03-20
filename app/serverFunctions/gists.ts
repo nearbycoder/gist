@@ -193,6 +193,49 @@ export const getPublicGist = createServerFn({
     return gist;
   });
 
+// GET /api/gists/public
+export const getPublicGists = createServerFn({
+  method: 'GET',
+})
+  .validator(
+    zodValidator(
+      z.object({
+        take: z.number().optional(),
+      })
+    )
+  )
+  .handler(async ({ data }) => {
+    const publicGists = await prisma.gist.findMany({
+      where: {
+        isPublic: true,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        versions: {
+          orderBy: {
+            version: 'desc',
+          },
+          take: 1,
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: data.take,
+    });
+
+    return {
+      publicGists,
+    };
+  });
+
 // POST /api/gists
 export const createGist = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])

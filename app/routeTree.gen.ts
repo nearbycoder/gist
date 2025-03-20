@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/auth'
 import { Route as DashboardImport } from './routes/_dashboard'
 import { Route as DashboardIndexImport } from './routes/_dashboard/index'
+import { Route as GistsPublicImport } from './routes/gists/public'
 import { Route as AuthRegisterImport } from './routes/auth/register'
 import { Route as AuthLoginImport } from './routes/auth/login'
 import { Route as DashboardSettingsImport } from './routes/_dashboard.settings'
@@ -43,6 +44,12 @@ const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
+} as any)
+
+const GistsPublicRoute = GistsPublicImport.update({
+  id: '/gists/public',
+  path: '/gists/public',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthRegisterRoute = AuthRegisterImport.update({
@@ -149,6 +156,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterImport
       parentRoute: typeof AuthImport
+    }
+    '/gists/public': {
+      id: '/gists/public'
+      path: '/gists/public'
+      fullPath: '/gists/public'
+      preLoaderRoute: typeof GistsPublicImport
+      parentRoute: typeof rootRoute
     }
     '/_dashboard/': {
       id: '/_dashboard/'
@@ -262,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/gists/public': typeof GistsPublicRoute
   '/': typeof DashboardIndexRoute
   '/admin/gists': typeof DashboardAdminGistsRoute
   '/admin/users': typeof DashboardAdminUsersRoute
@@ -278,6 +293,7 @@ export interface FileRoutesByTo {
   '/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/gists/public': typeof GistsPublicRoute
   '/': typeof DashboardIndexRoute
   '/admin/gists': typeof DashboardAdminGistsRoute
   '/admin/users': typeof DashboardAdminUsersRoute
@@ -296,6 +312,7 @@ export interface FileRoutesById {
   '/_dashboard/settings': typeof DashboardSettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/gists/public': typeof GistsPublicRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/admin/gists': typeof DashboardAdminGistsRoute
   '/_dashboard/admin/users': typeof DashboardAdminUsersRoute
@@ -315,6 +332,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/login'
     | '/auth/register'
+    | '/gists/public'
     | '/'
     | '/admin/gists'
     | '/admin/users'
@@ -330,6 +348,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/login'
     | '/auth/register'
+    | '/gists/public'
     | '/'
     | '/admin/gists'
     | '/admin/users'
@@ -346,6 +365,7 @@ export interface FileRouteTypes {
     | '/_dashboard/settings'
     | '/auth/login'
     | '/auth/register'
+    | '/gists/public'
     | '/_dashboard/'
     | '/_dashboard/admin/gists'
     | '/_dashboard/admin/users'
@@ -361,6 +381,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  GistsPublicRoute: typeof GistsPublicRoute
   GistsIdEmbedRoute: typeof GistsIdEmbedRoute
   GistsIdShareRoute: typeof GistsIdShareRoute
 }
@@ -368,6 +389,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  GistsPublicRoute: GistsPublicRoute,
   GistsIdEmbedRoute: GistsIdEmbedRoute,
   GistsIdShareRoute: GistsIdShareRoute,
 }
@@ -384,6 +406,7 @@ export const routeTree = rootRoute
       "children": [
         "/_dashboard",
         "/auth",
+        "/gists/public",
         "/gists/$id/embed",
         "/gists/$id/share"
       ]
@@ -419,6 +442,9 @@ export const routeTree = rootRoute
     "/auth/register": {
       "filePath": "auth/register.tsx",
       "parent": "/auth"
+    },
+    "/gists/public": {
+      "filePath": "gists/public.tsx"
     },
     "/_dashboard/": {
       "filePath": "_dashboard/index.tsx",
