@@ -11,11 +11,6 @@ import {
 } from '@/components/ui/card';
 import { getPublicGists } from '@/serverFunctions/gists';
 
-type GistWithUserAndVersions = Gist & {
-  user: Pick<User, 'id' | 'name' | 'email' | 'image'>;
-  versions: Array<Version>;
-};
-
 export const Route = createFileRoute('/gists/public')({
   component: PublicGistsPage,
   loader: async () => {
@@ -79,4 +74,8 @@ function PublicGistsPage() {
       </div>
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> refs/remotes/origin/main

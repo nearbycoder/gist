@@ -28,6 +28,49 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
   });
 });
 
+// GET /api/gists/public
+export const getPublicGists = createServerFn({
+  method: 'GET',
+})
+  .validator(
+    zodValidator(
+      z.object({
+        take: z.number().optional(),
+      })
+    )
+  )
+  .handler(async ({ data }) => {
+    const publicGists = await prisma.gist.findMany({
+      where: {
+        isPublic: true,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        versions: {
+          orderBy: {
+            version: 'desc',
+          },
+          take: 1,
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: data.take,
+    });
+
+    return {
+      publicGists,
+    };
+  });
+
 // GET /api/gists
 export const getGists = createServerFn({
   method: 'GET',
@@ -291,10 +334,15 @@ export const updateGist = createServerFn({ method: 'POST' })
 
     const versions = await prisma.version.findMany({
       where: { gistId: data.id },
-      orderBy: {
-        version: 'desc',
-      },
+      orderBy: { version: 'desc' },
+      take: 1,
     });
+
+    const latestVersion = versions[0];
+
+    if (!latestVersion) {
+      throw new Error('No versions found');
+    }
 
     const gist = await prisma.gist.update({
       where: { id: data.id, userId: user.id },
@@ -305,147 +353,15 @@ export const updateGist = createServerFn({ method: 'POST' })
       },
     });
 
-    await prisma.version.create({
-      data: {
-        version: versions[0].version + 1,
-        body: data.body,
-        gistId: gist.id,
-      },
-    });
+    if (latestVersion.body !== data.body) {
+      await prisma.version.create({
+        data: {
+          version: latestVersion.version + 1,
+          body: data.body,
+          gistId: gist.id,
+        },
+      });
+    }
 
     return gist;
-  });
-
-// DELETE /api/gists/:id
-export const deleteGist = createServerFn({
-  method: 'POST',
-})
-  .middleware([authMiddleware])
-  .validator(
-    z.object({
-      gistId: z.string(),
-    })
-  )
-  .handler(async ({ data, context }) => {
-    const user = context.user;
-
-    await prisma.version.deleteMany({
-      where: {
-        gistId: data.gistId,
-      },
-    });
-
-    await prisma.gist.delete({
-      where: { id: data.gistId, userId: user.id },
-    });
-
-    return;
-  });
-
-// POST /api/gists/:id/favorite
-export const toggleFavorite = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
-  .validator(
-    zodValidator(
-      z.object({
-        gistId: z.string(),
-      })
-    )
-  )
-  .handler(async ({ data, context }) => {
-    const user = context.user;
-
-    const favorite = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: {
-        favorites: {
-          where: { id: data.gistId },
-        },
-      },
-    });
-
-    if (favorite?.favorites.length) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          favorites: {
-            disconnect: { id: data.gistId },
-          },
-        },
-      });
-      return false;
-    } else {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          favorites: {
-            connect: { id: data.gistId },
-          },
-        },
-      });
-      return true;
-    }
-  });
-
-// POST /api/gists/:id/fork
-export const forkGist = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
-  .validator(
-    zodValidator(
-      z.object({
-        gistId: z.string(),
-      })
-    )
-  )
-  .handler(async ({ data, context }) => {
-    const user = context.user;
-
-    // Get the original gist with its latest version
-    const originalGist = await prisma.gist.findUnique({
-      where: { id: data.gistId, isPublic: true },
-      include: {
-        versions: {
-          orderBy: {
-            version: 'desc',
-          },
-          take: 1,
-        },
-      },
-    });
-
-    if (!originalGist) {
-      throw new Error('Gist not found or is not public');
-    }
-
-    // Create a new gist as a fork
-    const forkedGist = await prisma.gist.create({
-      data: {
-        title: originalGist.title,
-        language: originalGist.language,
-        isPublic: originalGist.isPublic,
-        userId: user.id,
-        forkedFromId: originalGist.id,
-      },
-    });
-
-    // Create the first version of the forked gist
-    await prisma.version.create({
-      data: {
-        version: 1,
-        body: originalGist.versions[0].body,
-        gistId: forkedGist.id,
-      },
-    });
-
-    // Increment the fork count on the original gist
-    await prisma.gist.update({
-      where: { id: originalGist.id },
-      data: {
-        forksCount: {
-          increment: 1,
-        },
-      },
-    });
-
-    return forkedGist;
   });
