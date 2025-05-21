@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { zodValidator } from '@tanstack/zod-adapter';
-import z from 'node_modules/zod/lib';
+import { z } from 'zod';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 import { prisma } from '@/lib/db';
 import { auth, getSession } from '@/lib/auth';
