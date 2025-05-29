@@ -137,3 +137,9 @@ export function ThemeToggle() {
     </div>
   );
 }
+
+export const useResolvedTheme = () => {
+  const mode = useThemeStore((s) => s.mode);
+  const prefers = useThemeStore((s) => s.prefers);
+  return mode === 'auto' ? prefers : mode;
+};

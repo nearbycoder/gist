@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, lazy } from 'react';
-import { useThemeStore } from './ThemeToggle';
+import { useResolvedTheme } from './ThemeToggle';
 import githubdark from './editor-themes/githubdark';
 import githublight from './editor-themes/githublight';
 import type { Monaco } from '@monaco-editor/react';
@@ -22,7 +22,7 @@ export function DiffViewer({
   newVersion,
   language = 'typescript',
 }: DiffViewerProps) {
-  const { mode } = useThemeStore();
+  const resolvedTheme = useResolvedTheme();
 
   const handleEditorDidMount = (monaco: Monaco) => {
     monaco.editor.defineTheme(
@@ -42,9 +42,7 @@ export function DiffViewer({
           beforeMount={handleEditorDidMount}
           original={oldVersion}
           modified={newVersion}
-          theme={
-            mode === 'dark' || mode === 'auto' ? 'GitHubDark' : 'GitHubLight'
-          }
+          theme={resolvedTheme === 'dark' ? 'GitHubDark' : 'GitHubLight'}
           language={language}
           options={{
             minimap: {
