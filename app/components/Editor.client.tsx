@@ -3,7 +3,7 @@
 import { Suspense, lazy } from 'react';
 import githubdark from './editor-themes/githubdark';
 import githublight from './editor-themes/githublight';
-import { useThemeStore } from './ThemeToggle';
+import { useResolvedTheme } from './ThemeToggle';
 import type { Monaco } from '@monaco-editor/react';
 
 const MonacoEditor = lazy(() =>
@@ -23,7 +23,7 @@ export function Editor({
   minimal?: boolean;
   theme?: 'auto' | 'dark' | 'light';
 }) {
-  const { mode } = useThemeStore();
+  const resolvedTheme = useResolvedTheme();
 
   const handleEditorDidMount = (monaco: Monaco) => {
     monaco.editor.defineTheme('GitHubDark', githubdark as any);
@@ -32,7 +32,7 @@ export function Editor({
 
   const editorTheme =
     theme === 'auto'
-      ? mode === 'dark'
+      ? resolvedTheme === 'dark'
         ? 'GitHubDark'
         : 'GitHubLight'
       : theme === 'dark'
