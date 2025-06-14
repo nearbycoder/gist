@@ -8,3 +8,5 @@ worker.db*
 db.sqlite*
 db.sqlite*
 worker.sqlite*
+.nitro
+.tanstack
