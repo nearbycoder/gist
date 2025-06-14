@@ -1,9 +1,9 @@
+import { createServerFileRoute } from '@tanstack/react-start/server';
 import { ImageResponse } from '@vercel/og';
-import { createAPIFileRoute } from '@tanstack/react-start/api';
 import { languageDisplayNames } from '@/config/languages';
 import { prisma } from '@/lib/db';
 
-export const APIRoute = createAPIFileRoute('/api/og/$id')({
+export const ServerRoute = createServerFileRoute('/api/og/$id').methods({
   GET: async ({ params }) => {
     const gist = await prisma.gist.findUnique({
       where: { id: params.id, isPublic: true },

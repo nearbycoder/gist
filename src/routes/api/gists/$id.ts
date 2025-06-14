@@ -1,8 +1,8 @@
-import { createAPIFileRoute } from '@tanstack/react-start/api';
+import { createServerFileRoute } from '@tanstack/react-start/server';
 import { json } from '@tanstack/react-start';
 import { prisma } from '@/lib/db';
 
-export const APIRoute = createAPIFileRoute('/api/gists/$id')({
+export const ServerRoute = createServerFileRoute('/api/gists/$id').methods({
   GET: async ({ params, request }) => {
     const { id } = params;
     const url = new URL(request.url);

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import * as React from 'react';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { twMerge } from 'tailwind-merge';
-import { getCookie, setCookie } from 'vinxi/http';
+import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
 import { create } from 'zustand';
 
