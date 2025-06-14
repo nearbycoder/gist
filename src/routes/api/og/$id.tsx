@@ -57,8 +57,8 @@ export const ServerRoute = createServerFileRoute('/api/og/$id').methods({
             }}
           >
             <img
-              src={gist.user.image}
-              alt={gist.user.name}
+              src={gist.user.image ?? ''}
+              alt={gist.user.name ?? ''}
               width={80}
               height={80}
               style={{

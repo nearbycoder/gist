@@ -7,10 +7,9 @@ import { z } from 'zod';
 import { create } from 'zustand';
 
 const themeModeSchema = z.enum(['light', 'dark', 'auto']);
-const prefersModeSchema = z.enum(['light', 'dark']);
 
-type ThemeMode = z.infer<typeof themeModeSchema>;
-type PrefersMode = z.infer<typeof prefersModeSchema>;
+type ThemeMode = 'light' | 'dark' | 'auto';
+type PrefersMode = 'light' | 'dark';
 
 interface ThemeStore {
   mode: ThemeMode;

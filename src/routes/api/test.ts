@@ -4,7 +4,7 @@ import { createServerFileRoute } from '@tanstack/react-start/server';
 import queue from '../../../queue';
 
 export const ServerRoute = createServerFileRoute('/api/test').methods({
-  GET: async ({ request, params }) => {
+  GET: async () => {
     queue.add('example', { message: 'Hello, world!' });
     const count = await queue.countJobs({ status: JobStatus.Pending });
 
